@@ -145,9 +145,25 @@ module.exports = class RisiBank {
         }
     }
 
+    static waitForSelector(selector, callback) {
+        const observer = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === "childList" && document.querySelector(selector)) {
+                    observer.disconnect();
+                    callback();
+                    return;
+                }
+            }
+        });
+
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true,
+        });
+    }
+
     addButton() {
         const buttons = document.querySelector(`.${Classes.global.buttons}`);
-        // Add the RisiBank TextArea button
 
         // Prevent the button from being removed
         BdApi.DOM.onRemoved(this.RBButton.insert(buttons), () => {
@@ -163,8 +179,10 @@ module.exports = class RisiBank {
 
         this.RBContainer.insert();
 
-        this.addButton().addEventListener("click", () => {
-            this.RBContainer.hide();
+        RisiBank.waitForSelector(`.${Classes.global.buttons}`, () => {
+            this.addButton().addEventListener("click", () => {
+                this.RBContainer.hide();
+            });
         });
     }
 
