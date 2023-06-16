@@ -1,0 +1,13 @@
+{
+    "name": "betterdiscordstuff",
+    "version": "0.0.0",
+    "author": "LockBlock-dev",
+    "license": "AGPL-3.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LockBlock-dev/BetterDiscordStuff.git"
+    },
+    "devDependencies": {
+        "@types/betterdiscord": "github:zerthox/betterdiscord-types"
+    }
+}

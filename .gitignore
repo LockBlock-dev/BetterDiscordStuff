@@ -1,2 +1,5 @@
 .vscode
 build.sh
+
+node_modules
+pnpm-lock.yaml
