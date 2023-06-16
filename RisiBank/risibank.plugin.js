@@ -1,14 +1,15 @@
 /**
  * @name RisiBank
  * @author LockBlock
- * @version 1.0.0
  * @description Brings RisiBank to the Discord client.
+ * @version 2.0.0
+ * @donate https://ko-fi.com/lockblock
+ * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
 
-const { Webpack, Patcher } = BdApi;
+const { Webpack, Patcher, React, ReactUtils, Utils } = BdApi;
 const { getModule, Filters } = Webpack;
 
-const BUTTON_ID = "risibank-btn";
 const CONTAINER_ID = "risibank-container";
 
 const Classes = {
@@ -29,62 +30,109 @@ const ComponentDispatch = getModule(
     { searchExports: true }
 );
 
+let TextAreaButtonsMemo;
+
+/**
+ * Represents a RisiBank plugin button.
+ * @class
+ */
 class RisiBankButton {
+    /**
+     * Constructs a new instance of the RisiBankButton class.
+     * @constructor
+     */
     constructor() {
-        const container = document.createElement("div");
-        const button = document.createElement("button");
-
-        container.setAttribute("id", BUTTON_ID);
-        container.appendChild(button);
-        container.classList.add(
-            Classes.manual.expressionPickerChatInputButton,
-            Classes.global.buttonContainer
+        /**
+         * The React element representing the RisiBank button.
+         * @type {React.Element}
+         */
+        this.self = React.createElement(
+            "div",
+            {
+                className: [
+                    Classes.manual.expressionPickerChatInputButton,
+                    Classes.global.buttonContainer,
+                ].join(" "),
+            },
+            React.createElement(
+                "button",
+                {
+                    type: "button",
+                    "aria-label": "Open RisiBank sticker picker",
+                    onClick: RisiBankContainer.hide,
+                    className: [
+                        Classes.global.button,
+                        Classes.branding.button,
+                        Classes.branding.lookBlank,
+                        Classes.branding.colorBrand,
+                        Classes.branding.grow,
+                    ].join(" "),
+                },
+                React.createElement(
+                    "svg",
+                    {
+                        width: "24",
+                        height: "24",
+                        className: Classes.global.stickerIcon,
+                        viewBox: "0 0 20 20",
+                    },
+                    React.createElement("path", {
+                        style: { fill: "#010101", stroke: "none" },
+                        d: "M0 0L1 1L0 0z",
+                    }),
+                    React.createElement("path", {
+                        style: { fill: "#fe83b3", stroke: "none" },
+                        d: "M1.6034 1.02778C-0.564398 2.7447 0.00482528 6.58035 0 9C-0.00536454 11.6901 -0.769009 16.128 1.02778 18.3966C3.2502 21.2026 15.7091 21.1008 18.3966 18.9722C20.5644 17.2553 19.9952 13.4196 20 11C20.0054 8.30995 20.769 3.87202 18.9722 1.60339C16.7498 -1.20264 4.29094 -1.1008 1.6034 1.02778z",
+                    }),
+                    React.createElement("path", {
+                        style: { fill: "#010101", stroke: "none" },
+                        d: "M19 0L20 1L19 0z",
+                    }),
+                    React.createElement("path", {
+                        style: { fill: "#b15b8c", stroke: "none" },
+                        d: "M2 13L2 16L3 16L2 13z",
+                    }),
+                    React.createElement("path", {
+                        style: { fill: "#251547", stroke: "none" },
+                        d: "M3 16L13 16C12.0438 11.5379 3.95617 11.5379 3 16z",
+                    }),
+                    React.createElement("path", {
+                        style: { fill: "#b15b8c", stroke: "none" },
+                        d: "M13 13L13 16L14 16L13 13z",
+                    }),
+                    React.createElement("path", {
+                        style: { fill: "#582f61", stroke: "none" },
+                        d: "M4 15L5 16L4 15M11 15L12 16L11 15z",
+                    }),
+                    React.createElement("path", {
+                        style: { fill: "#010101", stroke: "none" },
+                        d: "M0 19L1 20L0 19M19 19L20 20L19 19z",
+                    })
+                )
+            )
         );
-
-        button.setAttribute("type", "button");
-        button.setAttribute("aria-label", "Open RisiBank sticker picker");
-        button.classList.add(
-            Classes.global.button,
-            Classes.branding.button,
-            Classes.branding.lookBlank,
-            Classes.branding.colorBrand,
-            Classes.branding.grow
-        );
-
-        // RisiBank logo
-        button.innerHTML = `
-        <svg width="24" height="24" class="${Classes.global.stickerIcon}" viewBox="0 0 20 20">
-            <path style="fill:#010101; stroke:none;" d="M0 0L1 1L0 0z"/>
-            <path style="fill:#fe83b3; stroke:none;" d="M1.6034 1.02778C-0.564398 2.7447 0.00482528 6.58035 0 9C-0.00536454 11.6901 -0.769009 16.128 1.02778 18.3966C3.2502 21.2026 15.7091 21.1008 18.3966 18.9722C20.5644 17.2553 19.9952 13.4196 20 11C20.0054 8.30995 20.769 3.87202 18.9722 1.60339C16.7498 -1.20264 4.29094 -1.1008 1.6034 1.02778z"/>
-            <path style="fill:#010101; stroke:none;" d="M19 0L20 1L19 0z"/>
-            <path style="fill:#b15b8c; stroke:none;" d="M2 13L2 16L3 16L2 13z"/>
-            <path style="fill:#251547; stroke:none;" d="M3 16L13 16C12.0438 11.5379 3.95617 11.5379 3 16z"/>
-            <path style="fill:#b15b8c; stroke:none;" d="M13 13L13 16L14 16L13 13z"/>
-            <path style="fill:#582f61; stroke:none;" d="M4 15L5 16L4 15M11 15L12 16L11 15z"/>
-            <path style="fill:#010101; stroke:none;" d="M0 19L1 20L0 19M19 19L20 20L19 19z"/>
-        </svg>
-        `;
-
-        this.self = container;
-    }
-
-    insert(buttons) {
-        const remnants = document.querySelectorAll(`#${BUTTON_ID}`);
-        if (remnants.length === 0) buttons.insertBefore(this.self, buttons.lastChild);
-
-        return this.self;
     }
 }
 
+/**
+ * Represents a RisiBank plugin container.
+ * @class
+ */
 class RisiBankContainer {
+    /**
+     * Constructs a new instance of the RisiBankContainer class.
+     * @constructor
+     */
     constructor() {
-        this.hidden = true;
+        /**
+         * The DOM element representing the RisiBank container.
+         * @type {HTMLElement}
+         */
+        this.self = document.createElement("div");
 
-        const container = document.createElement("div");
+        this.self.setAttribute("id", CONTAINER_ID);
 
-        container.setAttribute("id", CONTAINER_ID);
-
-        container.style.cssText = `
+        this.self.style.cssText = `
             position: fixed;
             top: 50%;
             left: 50%;
@@ -96,10 +144,13 @@ class RisiBankContainer {
             align-items: center;
             display: none;
         `;
-
-        this.self = container;
     }
 
+    /**
+     * Inserts the RisiBank container into the document body.
+     * Any existing remnants of the container with the same id will be removed before insertion.
+     * @returns {HTMLElement} - The RisiBank container element.
+     */
     insert() {
         const remnants = document.querySelectorAll(`#${CONTAINER_ID}`);
         if (remnants.length > 0) remnants.forEach((node) => node.remove());
@@ -109,33 +160,85 @@ class RisiBankContainer {
         return this.self;
     }
 
-    hide(hide = !this.hidden) {
-        if (hide) this.self.style.display = "none";
-        else this.self.style.display = "flex";
+    /**
+     * Toggles the visibility of the RisiBank container by changing its display style.
+     * If the container is currently hidden, it will be displayed as flex. Otherwise, it will be hidden.
+     * @static
+     * @returns {void}
+     */
+    static hide() {
+        const container = document.querySelector(`#${CONTAINER_ID}`);
 
-        this.hidden = hide;
-
-        return this.self;
+        if (container) {
+            if (container.style.display === "none") {
+                container.style.display = "flex";
+            } else {
+                container.style.display = "none";
+            }
+        }
     }
 }
 
+/**
+ * Represents the RisiBank plugin.
+ * @class
+ */
 module.exports = class RisiBank {
+    /**
+     * Constructs a new instance of the RisiBank plugin class.
+     * @param {object} meta - The meta information to initialize the instance.
+     * @constructor
+     */
     constructor(meta) {
+        /**
+         * The meta information associated with the instance.
+         * @type {object}
+         */
         this.meta = meta;
-        this.initialized = false;
-        this.essentials = {};
 
+        /**
+         * Indicates whether the instance has been initialized.
+         * @type {boolean}
+         */
+        this.initialized = false;
+
+        /**
+         * The RisiBankWrapper instance associated with the instance.
+         * @type {RisiBankWrapper}
+         */
         this.RBWrapper = new RisiBankWrapper();
     }
 
+    /**
+     * Logs a message prefixed by the module name to the console.
+     * @static
+     * @param {string} moduleName - he name of the current module.
+     * @param {string} message - The message to display.
+     * @returns {void}
+     */
     static log(moduleName, message) {
         console.log(`%c[${moduleName}]%c ${message}`, "color: #3a71c1; font-weight: 700;", "");
     }
 
+    /**
+     * Logs a warning message prefixed by the module name to the console.
+     * @static
+     * @param {string} moduleName - The name of the current module.
+     * @param {string} message - The warning message to display.
+     * @returns {void}
+     */
     static warn(moduleName, message) {
         console.warn(`%c[${moduleName}]%c ${message}`, "color: #E8A400; font-weight: 700;", "");
     }
 
+    /**
+     * Logs an error message prefixed by the module name and optional error details to the console.
+     * @static
+     * @param {string} moduleName - The name of the current module.
+     * @param {string} message - The error message to display.
+     * @param {Error} [error] - The optional error object to display additional details.
+     * @returns {void}
+     */
     static err(moduleName, message, error) {
         console.log(`%c[${moduleName}]%c ${message}`, "color: red; font-weight: 700;", "");
         if (error) {
@@ -145,47 +248,80 @@ module.exports = class RisiBank {
         }
     }
 
-    static waitForSelector(selector, callback) {
-        const observer = new MutationObserver((mutationsList) => {
-            for (const mutation of mutationsList) {
-                if (mutation.type === "childList" && document.querySelector(selector)) {
-                    observer.disconnect();
-                    callback();
-                    return;
+    /**
+     * Converts a CSS class name or an array of CSS class names to a CSS selector.
+     * @static
+     * @param {string|string[]} className - The class name(s) to convert.
+     * @returns {string} - The resulting CSS selector.
+     */
+    static toSelector(className) {
+        return Array.isArray(className) ? `.${className.join(" .")}` : `.${className}`;
+    }
+
+    /**
+     * Waits for the specified selector to become available in the DOM.
+     * @static
+     * @async
+     * @param {string} selector - The CSS selector to wait for.
+     * @returns {Promise<void>} - A promise that resolves when the selector is found.
+     */
+    static async waitForSelector(selector) {
+        return new Promise((resolve, reject) => {
+            const observer = new MutationObserver((mutationsList) => {
+                for (const mutation of mutationsList) {
+                    if (mutation.type === "childList" && document.querySelector(selector)) {
+                        observer.disconnect();
+                        resolve();
+                        return;
+                    }
                 }
-            }
-        });
+            });
 
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true,
+            observer.observe(document.documentElement, {
+                childList: true,
+                subtree: true,
+            });
         });
     }
 
-    addButton() {
-        const buttons = document.querySelector(`.${Classes.global.buttons}`);
-
-        // Prevent the button from being removed
-        BdApi.DOM.onRemoved(this.RBButton.insert(buttons), () => {
-            this.addButton();
-        });
-
-        return this.RBButton.self;
-    }
-
-    init() {
+    /**
+     * Initializes the plugin.
+     * @async
+     * @returns {Promise<void>}
+     */
+    async init() {
         this.RBButton = new RisiBankButton();
         this.RBContainer = new RisiBankContainer();
 
         this.RBContainer.insert();
 
-        RisiBank.waitForSelector(`.${Classes.global.buttons}`, () => {
-            this.addButton().addEventListener("click", () => {
-                this.RBContainer.hide();
-            });
+        // preventing error on start if the user is not in a channel
+        await RisiBank.waitForSelector(RisiBank.toSelector(Classes.global.buttons));
+
+        TextAreaButtonsMemo = ReactUtils.getInternalInstance(
+            document.querySelector(RisiBank.toSelector(Classes.global.buttons))
+        )?.return?.elementType;
+
+        Patcher.after(this.meta.name, TextAreaButtonsMemo, "type", (_, [props], ret) => {
+            // const emojiButton = ret.props.children[ret.props.children.length - 1];
+
+            // inserting the RisiBank button just between sticker and emoji button
+            ret.props.children.splice(-1, 0, this.RBButton.self);
         });
+
+        // const parent = Utils.findInTree(
+        //     ReactUtils.getInternalInstance(document.querySelector(RisiBank.toSelector(Classes.global.buttons))),
+        //     (e) => e?.stateNode && e?.stateNode && typeof e?.stateNode?.forceUpdate === "function",
+        //     { walkable: ["return"] }
+        // );
+
+        // parent?.stateNode?.forceUpdate();
     }
 
+    /**
+     * Starts the plugin.
+     * @returns {void}
+     */
     start() {
         this.initialized = false;
 
@@ -210,10 +346,11 @@ module.exports = class RisiBank {
                 theme: "dark",
                 mediaSize: "sm",
                 defaultTab: "hot",
+                showNSFW: false,
                 allowUsernameSelection: false,
 
                 onSelectMedia: ({ id, type, media }) => {
-                    this.RBContainer.hide(true);
+                    RisiBankContainer.hide();
 
                     let mediaUrl = media.cache_url;
 
@@ -231,22 +368,33 @@ module.exports = class RisiBank {
         }
     }
 
+    /**
+     * Stops the plugin by undoing any changes made during initialization.
+     * @returns {void}
+     */
     stop() {
+        Patcher.unpatchAll(this.meta.name);
+
         this.RBWrapper.unload();
-        this.RBButton.self.removeEventListener("click");
+
         this.RBContainer.self.remove();
-        this.RBButton.self.remove();
+
         delete this.RBButton;
         delete this.RBContainer;
-        Patcher.unpatchAll(this.meta.name);
     }
 };
 
 /**
- * RisiBank integration setup
- * @see https://risibank.fr/doc-api
+ * Wrapper class for the RisiBank integration.
+ * Provides methods to initialize and unload the integration.
+ * @class
+ * @see {@link https://risibank.fr/doc-api} for more information.
  */
 class RisiBankWrapper {
+    /**
+     * Initializes the RisiBank integration.
+     * @returns {void}
+     */
     init() {
         "use strict";
         class e {
@@ -593,6 +741,10 @@ class RisiBankWrapper {
             })());
     }
 
+    /**
+     * Unloads the RisiBank integration by removing it from the global window object.
+     * @returns {void}
+     */
     unload() {
         if ("undefined" !== typeof window && window.RisiBank) delete window.RisiBank;
     }
