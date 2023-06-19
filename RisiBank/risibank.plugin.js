@@ -2,12 +2,12 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 2.0.0
+ * @version 2.0.1
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
 
-const { Webpack, Patcher, React, ReactUtils, Utils } = BdApi;
+const { Webpack, Patcher, React, ReactUtils, UI, Utils } = BdApi;
 const { getModule, Filters } = Webpack;
 
 const CONTAINER_ID = "risibank-container";
@@ -285,6 +285,21 @@ module.exports = class RisiBank {
     }
 
     /**
+     * Re-renders a React component instance.
+     * @static
+     * @param {string} moduleName - The name of the current module.
+     * @param {string} selector -The CSS selector used to find the target element.
+     * @returns {void}
+     */
+    static reRender(moduleName, selector) {
+        const target = document.querySelector(selector);
+        if (!target) return;
+        const instance = ReactUtils.getOwnerInstance(target);
+        const unpatch = Patcher.instead(moduleName, instance, "render", () => unpatch());
+        instance.forceUpdate(() => instance.forceUpdate());
+    }
+
+    /**
      * Initializes the plugin.
      * @async
      * @returns {Promise<void>}
@@ -309,13 +324,7 @@ module.exports = class RisiBank {
             ret.props.children.splice(-1, 0, this.RBButton.self);
         });
 
-        // const parent = Utils.findInTree(
-        //     ReactUtils.getInternalInstance(document.querySelector(RisiBank.toSelector(Classes.global.buttons))),
-        //     (e) => e?.stateNode && e?.stateNode && typeof e?.stateNode?.forceUpdate === "function",
-        //     { walkable: ["return"] }
-        // );
-
-        // parent?.stateNode?.forceUpdate();
+        RisiBank.reRender(this.meta.name, RisiBank.toSelector(Classes.global.buttons));
     }
 
     /**
@@ -334,7 +343,7 @@ module.exports = class RisiBank {
             this.initialized = true;
         } catch (e) {
             RisiBank.err(this.meta.name, "Failed to initialize!", e);
-            BdApi.showToast(`Failed to initialize ${this.meta.name}!`, {
+            UI.showToast(`Failed to initialize ${this.meta.name}!`, {
                 type: "error",
             });
         }
