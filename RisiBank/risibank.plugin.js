@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 2.0.1
+ * @version 2.0.2
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
@@ -310,7 +310,7 @@ module.exports = class RisiBank {
 
         this.RBContainer.insert();
 
-        // preventing error on start if the user is not in a channel
+        // prevents an error on start if the user is not in a channel
         await RisiBank.waitForSelector(RisiBank.toSelector(Classes.global.buttons));
 
         TextAreaButtonsMemo = ReactUtils.getInternalInstance(
@@ -320,8 +320,11 @@ module.exports = class RisiBank {
         Patcher.after(this.meta.name, TextAreaButtonsMemo, "type", (_, [props], ret) => {
             // const emojiButton = ret.props.children[ret.props.children.length - 1];
 
-            // inserting the RisiBank button just between sticker and emoji button
-            ret.props.children.splice(-1, 0, this.RBButton.self);
+            // prevents the button to be added in profile settings
+            if (props?.type?.attachments) {
+                // inserts the RisiBank button just between sticker and emoji button
+                ret.props.children.splice(-1, 0, this.RBButton.self);
+            }
         });
 
         RisiBank.reRender(this.meta.name, RisiBank.toSelector(Classes.global.buttons));
