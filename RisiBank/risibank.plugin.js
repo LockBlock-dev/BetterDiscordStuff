@@ -2,35 +2,31 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 2.0.2
+ * @version 2.1.0
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
 
 const { Webpack, Patcher, React, ReactUtils, UI, Utils } = BdApi;
-const { getModule, Filters } = Webpack;
+const { getModule, getByKeys, getStore } = Webpack;
 
 const CONTAINER_ID = "risibank-container";
 
 const Classes = {
-    global: getModule(Filters.byProps("profileBioInput", "buttons")),
-    branding: getModule(Filters.byProps("lookBlank", "grow", "colorBrand")),
+    global: getByKeys("profileBioInput", "buttons"),
+    branding: getByKeys("lookBlank", "grow", "colorBrand"),
     manual: {
         expressionPickerChatInputButton: "expression-picker-chat-input-button",
     },
 };
 
-const SelectedChannelStore = getModule(Filters.byProps("getChannelId", "getLastSelectedChannelId"));
-const MessagesManager = getModule(Filters.byProps("sendMessage"));
-const ComponentDispatch = getModule(
-    (m) =>
-        m.dispatchToLastSubscribed &&
-        m.emitter?.listeners("CLEAR_TEXT").length &&
-        m.emitter?.listeners("INSERT_TEXT").length,
-    { searchExports: true }
-);
+const Dispatcher = getByKeys("dispatch", "subscribe");
+const MessageActions = getByKeys("_sendMessage", "sendMessage");
 
-let TextAreaButtonsMemo;
+const PendingReplyStore = getStore("PendingReplyStore");
+const SelectedChannelStore = getStore("SelectedChannelStore");
+
+let ComponentDispatch, TextAreaButtonsMemo;
 
 /**
  * Represents a RisiBank plugin button.
@@ -255,7 +251,7 @@ module.exports = class RisiBank {
      * @returns {string} - The resulting CSS selector.
      */
     static toSelector(className) {
-        return Array.isArray(className) ? `.${className.join(" .")}` : `.${className}`;
+        return Array.isArray(className) ? `.${className.join(".")}` : `.${className}`;
     }
 
     /**
@@ -313,6 +309,11 @@ module.exports = class RisiBank {
         // prevents an error on start if the user is not in a channel
         await RisiBank.waitForSelector(RisiBank.toSelector(Classes.global.buttons));
 
+        ComponentDispatch = getModule(
+            (m) => m.dispatchToLastSubscribed && m.emitter?.listeners("TEXTAREA_FOCUS").length,
+            { searchExports: true }
+        );
+
         TextAreaButtonsMemo = ReactUtils.getInternalInstance(
             document.querySelector(RisiBank.toSelector(Classes.global.buttons))
         )?.return?.elementType;
@@ -369,10 +370,32 @@ module.exports = class RisiBank {
                     if (mediaUrl.includes("full")) mediaUrl = mediaUrl.replace("full", "thumb");
 
                     const currentChannelId = SelectedChannelStore.getChannelId();
-                    MessagesManager.sendMessage(currentChannelId, {
-                        content: mediaUrl,
-                        validNonShortcutEmojis: [],
-                    });
+
+                    const pendingReply = PendingReplyStore.getPendingReply(currentChannelId);
+
+                    const { allowedMentions, messageReference } =
+                        MessageActions.getSendMessageOptionsForReply(pendingReply);
+
+                    if (pendingReply)
+                        Dispatcher.dispatch({
+                            type: "DELETE_PENDING_REPLY",
+                            channelId: currentChannelId,
+                        });
+
+                    MessageActions.sendMessage(
+                        currentChannelId,
+                        {
+                            content: mediaUrl,
+                            invalidEmojis: [],
+                            tts: false,
+                            validNonShortcutEmojis: [],
+                        },
+                        true, // whether to wait for the channel to be ready
+                        {
+                            messageReference: messageReference,
+                            allowedMentions: allowedMentions,
+                        }
+                    );
 
                     ComponentDispatch.dispatch("TEXTAREA_FOCUS", null);
                 },
