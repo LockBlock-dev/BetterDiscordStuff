@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 2.1.0
+ * @version 3.0.0
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
@@ -416,6 +416,8 @@ module.exports = class RisiBank {
 
         delete this.RBButton;
         delete this.RBContainer;
+
+        RisiBank.log(this.meta.name, `version ${this.meta.version} has stopped.`);
     }
 };
 
@@ -781,6 +783,9 @@ class RisiBankWrapper {
      * @returns {void}
      */
     unload() {
-        if ("undefined" !== typeof window && window.RisiBank) delete window.RisiBank;
+        if ("undefined" !== typeof window && window.RisiBank) {
+            window.RisiBank.desactivate();
+            delete window.RisiBank;
+        }
     }
 }
