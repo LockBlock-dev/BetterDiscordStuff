@@ -284,7 +284,7 @@ module.exports = class RisiBank {
      * Re-renders a React component instance.
      * @static
      * @param {string} moduleName - The name of the current module.
-     * @param {string} selector -The CSS selector used to find the target element.
+     * @param {string} selector - The CSS selector used to find the target element.
      * @returns {void}
      */
     static reRender(moduleName, selector) {
