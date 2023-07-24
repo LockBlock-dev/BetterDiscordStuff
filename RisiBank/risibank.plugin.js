@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 3.0.0
+ * @version 3.1.0
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
@@ -22,9 +22,15 @@ const Classes = {
 
 const Dispatcher = getByKeys("dispatch", "subscribe");
 const MessageActions = getByKeys("_sendMessage", "sendMessage");
+const Permissions = getByKeys("can", "computePermissions");
+const PermissionsConstants = getByKeys("ADD_REACTIONS", "EMBED_LINKS", {
+    searchExports: true,
+});
 
+const ChannelStore = getStore("ChannelStore");
 const PendingReplyStore = getStore("PendingReplyStore");
 const SelectedChannelStore = getStore("SelectedChannelStore");
+const UserStore = getStore("UserStore");
 
 let ComponentDispatch, TextAreaButtonsMemo;
 
@@ -296,6 +302,33 @@ module.exports = class RisiBank {
     }
 
     /**
+     * Returns the currently selected channel
+     * @returns {object | undefined} The currently selected channel object from the ChannelStore.
+     */
+    getCurrentChannel() {
+        ChannelStore.getChannel(SelectedChannelStore.getChannelId());
+    }
+
+    /**
+     * Computer a permission for an user in a channel.
+     * @param {bigint} permission - The permission flag to check.
+     * @param {object} user - The user for whom the permission is checked. Defaults to the current user.
+     * @param {object} channel - The channel in which the permission is checked. Defaults to the current channel.
+     * @returns {boolean} Returns `true` if the user has the specified permission in the channel context, otherwise `false`.
+     */
+    checkPermission(
+        permission,
+        user = UserStore.getCurrentUser(),
+        channel = this.getCurrentChannel()
+    ) {
+        return Permissions.can({
+            permission: permission,
+            user: user,
+            context: channel,
+        });
+    }
+
+    /**
      * Initializes the plugin.
      * @async
      * @returns {Promise<void>}
@@ -321,11 +354,19 @@ module.exports = class RisiBank {
         Patcher.after(this.meta.name, TextAreaButtonsMemo, "type", (_, [props], ret) => {
             // const emojiButton = ret.props.children[ret.props.children.length - 1];
 
+            if (props?.disabled) return;
+
             // prevents the button to be added in profile settings
-            if (props?.type?.attachments) {
+            if (!props?.type?.attachments) return;
+
+            // if the channel is DM or GROUP_DM or user has EMBED_LINKS permission
+            if (
+                props?.channel?.type === 1 ||
+                props?.channel?.type === 3 ||
+                this.checkPermission(PermissionsConstants.EMBED_LINKS)
+            )
                 // inserts the RisiBank button just between sticker and emoji button
                 ret.props.children.splice(-1, 0, this.RBButton.self);
-            }
         });
 
         RisiBank.reRender(this.meta.name, RisiBank.toSelector(Classes.global.buttons));
