@@ -1,0 +1,70 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.1.0] - 2023-07-24
+
+### Added
+
+-   Use of a build system
+-   This CHANGELOG file
+
+### Changed
+
+-   The plugin icon is no longer displayed if the TextArea input is disabled or if the user lacks the EMBED_LINKS permission
+
+## [3.0.0] - 2023-07-22
+
+### Fixed
+
+-   Delete the click event listener on stop to prevent duplication
+
+## [2.1.0] - 2023-07-19
+
+### Added
+
+-   Added the possibility to reply to a message with a sticker
+
+### Changed
+
+-   Use of the latest BetterDiscord Webpack API
+
+### Fixed
+
+-   Fixed ComponentDispatch being undefined
+
+## [2.0.2] - 2023-07-04
+
+### Fixed
+
+-   The plugin icon is now only added to channel TextAreaButtons, not in profile
+
+## [2.0.1] - 2023-06-19
+
+### Added
+
+-   Rerendering of the TextAreaButtons component after initial patching
+
+## [2.0.0] - 2023-06-16
+
+### Added
+
+-   License file
+-   BetterDiscord types
+
+### Changed
+
+-   The plugin now uses React patching instead of DOM patching
+
+### Fixed
+
+-   Prevent an error on startup by waiting for the TextAreaButtons selector
+
+## [1.0.0] - 2023-06-06
+
+### Added
+
+-   Initial release

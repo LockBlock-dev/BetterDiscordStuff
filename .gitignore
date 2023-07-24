@@ -1,5 +1,4 @@
-.vscode
-build.sh
-
 node_modules
+ignore-*
+
 pnpm-lock.yaml
