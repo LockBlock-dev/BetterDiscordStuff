@@ -297,7 +297,7 @@ module.exports = class RisiBank {
      * @returns {object | undefined} The currently selected channel object from the ChannelStore.
      */
     getCurrentChannel() {
-        ChannelStore.getChannel(SelectedChannelStore.getChannelId());
+        return ChannelStore.getChannel(SelectedChannelStore.getChannelId());
     }
 
     /**
