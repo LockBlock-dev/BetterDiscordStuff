@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 4.0.0
+ * @version 4.0.1
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
@@ -332,7 +332,8 @@ var patch = async () => {
       try {
         const elementType = navItems[0].type.type;
         const RBNavLabel = NavbarLabel_default(elementType);
-        navItems.splice(-1, 0, RBNavLabel);
+        const idx = navItems.findIndex((item) => item?.props?.viewType === "emoji");
+        navItems.splice(idx, 0, RBNavLabel);
         const activePicker = EPS.useExpressionPickerStore.getState().activeView;
         if (activePicker === EXPRESSION_PICKER_VIEW) {
           body.push(React3.createElement(Picker, {}));

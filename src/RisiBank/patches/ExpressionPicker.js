@@ -45,7 +45,9 @@ const patch = async () => {
 
                 const RBNavLabel = RisiBankNavLabel(elementType);
 
-                navItems.splice(-1, 0, RBNavLabel);
+                const idx = navItems.findIndex((item) => item?.props?.viewType === "emoji");
+
+                navItems.splice(idx, 0, RBNavLabel);
 
                 const activePicker =
                     ExpressionPickerStore.useExpressionPickerStore.getState().activeView;
