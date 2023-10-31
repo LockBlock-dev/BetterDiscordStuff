@@ -13,11 +13,11 @@ export const PermissionsConstants = getByKeys("ADD_REACTIONS", "EMBED_LINKS", {
 // Misc modules
 export const Dispatcher = getByKeys("dispatch", "subscribe");
 export const MessageActions = getByKeys("_sendMessage", "sendMessage");
-export const Permissions = getByKeys("can", "computePermissions");
+export const Permissions = getByKeys("can", "canEveryone", "computePermissions");
+export const ExpressionPicker = getByKeys("toggleExpressionPicker");
 
 // Stores
 export const ChannelStore = getStore("ChannelStore");
-export { ExpressionPickerStore } from "./ExpressionPickerStore";
 export const PendingReplyStore = getStore("PendingReplyStore");
 export const SelectedChannelStore = getStore("SelectedChannelStore");
 export const UserStore = getStore("UserStore");

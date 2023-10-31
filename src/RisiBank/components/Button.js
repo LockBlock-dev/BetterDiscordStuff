@@ -1,6 +1,6 @@
 const { React } = BdApi;
 
-import { ExpressionPickerStore, InputConstants } from "../discordModules";
+import { ExpressionPicker, InputConstants } from "../discordModules";
 import { EXPRESSION_PICKER_VIEW, TEXTAREA_BUTTON_ARIA_LABEL } from "../constants";
 import Classes from "../classes";
 
@@ -23,7 +23,7 @@ export default Button = () => {
                 type: "button",
                 "aria-label": TEXTAREA_BUTTON_ARIA_LABEL,
                 onClick: () => {
-                    ExpressionPickerStore.toggleExpressionPicker(
+                    ExpressionPicker.toggleExpressionPicker(
                         EXPRESSION_PICKER_VIEW,
                         InputConstants.NORMAL
                     );

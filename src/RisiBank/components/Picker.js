@@ -3,7 +3,7 @@ const { React, Webpack } = BdApi;
 import { BASE_API_URI, EXPRESSION_PICKER_VIEW } from "../constants";
 import {
     Dispatcher,
-    ExpressionPickerStore,
+    ExpressionPicker,
     MessageActions,
     PendingReplyStore,
     SelectedChannelStore,
@@ -103,7 +103,7 @@ export default class Picker extends React.Component {
 
         if (type !== "risibank-media-selected" || !media) return;
 
-        ExpressionPickerStore.closeExpressionPicker();
+        ExpressionPicker.closeExpressionPicker();
 
         let mediaUrl = media.cache_url;
 

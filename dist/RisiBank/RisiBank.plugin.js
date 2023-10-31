@@ -37,57 +37,6 @@ var BASE_API_URI = "https://risibank.fr";
 var TEXTAREA_BUTTON_ARIA_LABEL = `Open ${PLUGIN_NAME} sticker picker`;
 var EXPRESSION_PICKER_VIEW = "risibank";
 
-// src/RisiBank/discordModules/ExpressionPickerStore.js
-var {
-  Webpack: { getModule }
-} = BdApi;
-var ExpressionPickerStore = class {
-  /**
-   * Returns the internal Discord ExpressionPickerStore.
-   * @returns {void}
-   */
-  useExpressionPickerStore = () => {
-    throw Error("Not implemented");
-  };
-  /**
-   * Toggles the Expression Picker with the specified view and view type.
-   * @param {string} activeView - The active view to be displayed in the Expression Picker.
-   * @param {object} activeViewType - The type of the active view.
-   * @returns {void}
-   */
-  toggleExpressionPicker = (activeView, activeViewType) => {
-    throw Error("Not implemented");
-  };
-  /**
-   * Closes the Expression Picker.
-   * @param {object} [activeViewType] - The type of the active view.
-   * @returns {void}
-   */
-  closeExpressionPicker = (activeViewType) => {
-    throw Error("Not implemented");
-  };
-  /**
-   * Constructs a new instance of the ExpressionPickerStore class.
-   * @constructor
-   */
-  constructor() {
-    const ExpressionPickerModule = getModule(
-      (m) => Object.keys(m).some(
-        (key) => typeof m[key] === "function" && m[key].toString().includes("isSearchSuggestion")
-      )
-    );
-    Object.values(ExpressionPickerModule).forEach((fn) => {
-      if (fn.getState)
-        this.useExpressionPickerStore = fn;
-      else if (fn.toString().includes("==="))
-        this.toggleExpressionPicker = fn;
-      else if (fn.toString().includes("activeView:null,activeViewType:null"))
-        this.closeExpressionPicker = fn;
-    });
-  }
-};
-var EPS = new ExpressionPickerStore();
-
 // src/RisiBank/discordModules/index.js
 var {
   Webpack: { getByKeys, getStore }
@@ -100,7 +49,8 @@ var PermissionsConstants = getByKeys("ADD_REACTIONS", "EMBED_LINKS", {
 });
 var Dispatcher = getByKeys("dispatch", "subscribe");
 var MessageActions = getByKeys("_sendMessage", "sendMessage");
-var Permissions = getByKeys("can", "computePermissions");
+var Permissions = getByKeys("can", "canEveryone", "computePermissions");
+var ExpressionPicker = getByKeys("toggleExpressionPicker");
 var ChannelStore = getStore("ChannelStore");
 var PendingReplyStore = getStore("PendingReplyStore");
 var SelectedChannelStore = getStore("SelectedChannelStore");
@@ -175,7 +125,7 @@ var classes_default = {
 var { React } = BdApi;
 var NavbarLabel_default = NavbarLabel = (elementType) => {
   const type = EXPRESSION_PICKER_VIEW;
-  const selected = type === EPS.useExpressionPickerStore.getState().activeView;
+  const selected = type === ExpressionPicker.useExpressionPickerStore.getState().activeView;
   return React.createElement(
     elementType,
     {
@@ -272,7 +222,7 @@ var Picker = class extends React2.Component {
     } = e;
     if (type !== "risibank-media-selected" || !media)
       return;
-    EPS.closeExpressionPicker();
+    ExpressionPicker.closeExpressionPicker();
     let mediaUrl = media.cache_url;
     if (mediaUrl.includes("full"))
       mediaUrl = mediaUrl.replace("full", "thumb");
@@ -308,43 +258,52 @@ var { Patcher: Patcher2, React: React3, ReactUtils: ReactUtils2, Utils } = BdApi
 var patch = async () => {
   const ExpressionPickerSelector = toSelector(classes_default.expressionPicker.contentWrapper);
   await waitForSelector(ExpressionPickerSelector);
-  const ExpressionPicker = ReactUtils2.getOwnerInstance(
+  const ExpressionPickerInstance = ReactUtils2.getOwnerInstance(
     document.querySelector(ExpressionPickerSelector)
   );
-  Patcher2.after(PLUGIN_NAME, ExpressionPicker.constructor.prototype, "render", (_, __, ret) => {
-    const originalChildren = ret.props?.children;
-    if (originalChildren == null)
-      return;
-    ret.props.children = (...args) => {
-      const newChildren = originalChildren(...args);
-      const body = Utils.findInTree(newChildren, (e) => e?.some?.((c) => c?.type === "nav"), {
-        walkable: ["props", "children"]
-      });
-      if (!body)
-        return newChildren;
-      const navItems = Utils.findInTree(body[0], (e) => e?.role === "tablist", {
-        walkable: ["props", "children"]
-      })?.children;
-      if (!navItems)
-        return newChildren;
-      if (navItems.some((item) => item?.props?.viewType === EXPRESSION_PICKER_VIEW))
-        return newChildren;
-      try {
-        const elementType = navItems[0].type.type;
-        const RBNavLabel = NavbarLabel_default(elementType);
-        const idx = navItems.findIndex((item) => item?.props?.viewType === "emoji");
-        navItems.splice(idx, 0, RBNavLabel);
-        const activePicker = EPS.useExpressionPickerStore.getState().activeView;
-        if (activePicker === EXPRESSION_PICKER_VIEW) {
-          body.push(React3.createElement(Picker, {}));
+  Patcher2.after(
+    PLUGIN_NAME,
+    ExpressionPickerInstance.constructor.prototype,
+    "render",
+    (_, __, ret) => {
+      const originalChildren = ret.props?.children;
+      if (originalChildren == null)
+        return;
+      ret.props.children = (...args) => {
+        const newChildren = originalChildren(...args);
+        const body = Utils.findInTree(
+          newChildren,
+          (e) => e?.some?.((c) => c?.type === "nav"),
+          {
+            walkable: ["props", "children"]
+          }
+        );
+        if (!body)
+          return newChildren;
+        const navItems = Utils.findInTree(body[0], (e) => e?.role === "tablist", {
+          walkable: ["props", "children"]
+        })?.children;
+        if (!navItems)
+          return newChildren;
+        if (navItems.some((item) => item?.props?.viewType === EXPRESSION_PICKER_VIEW))
+          return newChildren;
+        try {
+          const elementType = navItems[0].type.type;
+          const RBNavLabel = NavbarLabel_default(elementType);
+          const idx = navItems.findIndex((item) => item?.props?.viewType === "emoji");
+          navItems.splice(idx, 0, RBNavLabel);
+          const activePicker = ExpressionPicker.useExpressionPickerStore.getState().activeView;
+          if (activePicker === EXPRESSION_PICKER_VIEW) {
+            body.push(React3.createElement(Picker, {}));
+          }
+        } catch (e) {
+          err("Failed to patch ExpressionPicker!", e);
         }
-      } catch (e) {
-        err("Failed to patch ExpressionPicker!", e);
-      }
-      return newChildren;
-    };
-  });
-  ExpressionPicker.forceUpdate();
+        return newChildren;
+      };
+    }
+  );
+  ExpressionPickerInstance.forceUpdate();
 };
 var ExpressionPicker_default = {
   name: "ExpressionPicker",
@@ -368,7 +327,7 @@ var Button_default = Button = () => {
         type: "button",
         "aria-label": TEXTAREA_BUTTON_ARIA_LABEL,
         onClick: () => {
-          EPS.toggleExpressionPicker(
+          ExpressionPicker.toggleExpressionPicker(
             EXPRESSION_PICKER_VIEW,
             InputConstants.NORMAL
           );

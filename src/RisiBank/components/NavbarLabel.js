@@ -1,6 +1,6 @@
 const { React } = BdApi;
 
-import { ExpressionPickerStore } from "../discordModules";
+import { ExpressionPicker } from "../discordModules";
 import { EXPRESSION_PICKER_VIEW, PLUGIN_NAME } from "../constants";
 
 /**
@@ -10,7 +10,7 @@ import { EXPRESSION_PICKER_VIEW, PLUGIN_NAME } from "../constants";
  */
 export default NavbarLabel = (elementType) => {
     const type = EXPRESSION_PICKER_VIEW;
-    const selected = type === ExpressionPickerStore.useExpressionPickerStore.getState().activeView;
+    const selected = type === ExpressionPicker.useExpressionPickerStore.getState().activeView;
 
     return React.createElement(
         elementType,
