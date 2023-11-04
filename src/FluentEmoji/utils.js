@@ -85,7 +85,9 @@ export const reRender = (moduleName, selector) => {
 };
 
 export const emojiSrcFromGlyph = (glyph) => {
-    const unicode = [...glyph].map((cp) => cp.codePointAt(0).toString(16)).join(" ");
+    const unicode = [...glyph]
+        .map((cp) => cp.codePointAt(0).toString(16).padStart(4, "0"))
+        .join(" ");
 
     if (!unicode.length) return;
 

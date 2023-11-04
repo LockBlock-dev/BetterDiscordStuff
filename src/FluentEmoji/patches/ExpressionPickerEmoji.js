@@ -7,7 +7,6 @@ import { reRender, toSelector, waitForSelector, emojiSrcFromGlyph } from "../uti
 const patch = async () => {
     const ExpressionPickerEmojiSelector = toSelector(Classes.emojiSpriteImage.emojiSpriteImage);
 
-    // prevents an error on start if the user is not in a channel
     await waitForSelector(ExpressionPickerEmojiSelector);
 
     const ExpressionPickerEmoji = ReactUtils.getInternalInstance(
@@ -32,7 +31,7 @@ const patch = async () => {
         if (!ret?.props?.style) return;
 
         ret.props.style = {
-            backgroundImage: `url(${EMOJI_SRC_BASE}/${newSrc})`,
+            backgroundImage: `url("${EMOJI_SRC_BASE}/${newSrc}")`,
             backgroundSize: "contain",
             height: "40px",
             width: "40px",

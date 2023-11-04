@@ -2,7 +2,7 @@
  * @name FluentEmoji
  * @author LockBlock
  * @description Brings FluentEmoji to the Discord client.
- * @version 1.0.1
+ * @version 1.0.2
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/FluentEmoji
  */
@@ -80,7 +80,7 @@ var reRender = (moduleName, selector) => {
   instance.forceUpdate(() => instance.forceUpdate());
 };
 var emojiSrcFromGlyph = (glyph) => {
-  const unicode = [...glyph].map((cp) => cp.codePointAt(0).toString(16)).join(" ");
+  const unicode = [...glyph].map((cp) => cp.codePointAt(0).toString(16).padStart(4, "0")).join(" ");
   if (!unicode.length)
     return;
   return emojis_default[unicode]?.src;
@@ -142,7 +142,7 @@ var patch2 = async () => {
     if (!ret?.props?.style)
       return;
     ret.props.style = {
-      backgroundImage: `url(${EMOJI_SRC_BASE}/${newSrc})`,
+      backgroundImage: `url("${EMOJI_SRC_BASE}/${newSrc}")`,
       backgroundSize: "contain",
       height: "40px",
       width: "40px"
