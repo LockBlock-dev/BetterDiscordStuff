@@ -28,9 +28,11 @@ export default class RisiBank {
      */
     async init() {
         patches.forEach((patchModule) => {
-            patchModule.patch().catch((e) => {
+            try {
+                patchModule.patch();
+            } catch (e) {
                 err(`Failed to run patch ${patchModule.name}!`, e);
-            });
+            }
         });
     }
 

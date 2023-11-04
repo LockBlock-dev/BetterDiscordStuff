@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 4.0.1
+ * @version 4.1.0
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
@@ -429,9 +429,11 @@ var RisiBank = class {
    */
   async init() {
     patches_default.forEach((patchModule) => {
-      patchModule.patch().catch((e) => {
+      try {
+        patchModule.patch();
+      } catch (e) {
         err(`Failed to run patch ${patchModule.name}!`, e);
-      });
+      }
     });
   }
   /**
