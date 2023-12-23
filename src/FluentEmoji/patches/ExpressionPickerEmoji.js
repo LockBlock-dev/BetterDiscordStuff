@@ -1,7 +1,7 @@
 const { Patcher, ReactUtils } = BdApi;
 
 import Classes from "../classes";
-import { PLUGIN_NAME, EMOJI_SRC_BASE } from "../constants";
+import { PLUGIN_NAME } from "../constants";
 import { reRender, toSelector, waitForSelector, emojiSrcFromGlyph } from "../utils";
 
 const patch = async () => {
@@ -23,15 +23,12 @@ const patch = async () => {
         const newSrc = emojiSrcFromGlyph(glyph);
 
         // unsupported emoji
-        if (!newSrc) {
-            // console.log(ret.props, unicode, emojis[unicode]);
-            return;
-        }
+        if (!newSrc) return;
 
         if (!ret?.props?.style) return;
 
         ret.props.style = {
-            backgroundImage: `url("${EMOJI_SRC_BASE}/${newSrc}")`,
+            backgroundImage: `url("${newSrc}")`,
             backgroundSize: "contain",
             height: "40px",
             width: "40px",

@@ -1,6 +1,6 @@
 const { Patcher } = BdApi;
 
-import { PLUGIN_NAME, EMOJI_SRC_BASE } from "../constants.js";
+import { PLUGIN_NAME } from "../constants.js";
 import { EmojiUtils } from "../discordModules/index.js";
 import { emojiSrcFromGlyph } from "../utils";
 
@@ -11,12 +11,9 @@ const patch = async () => {
         const newSrc = emojiSrcFromGlyph(args[0]);
 
         // unsupported emoji
-        if (!newSrc) {
-            // console.log(ret.props, unicode, emojis[unicode]);
-            return;
-        }
+        if (!newSrc) return ret;
 
-        return `${EMOJI_SRC_BASE}/${newSrc}`;
+        return newSrc;
     });
 };
 

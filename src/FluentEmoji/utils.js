@@ -1,7 +1,12 @@
 const { Patcher, ReactUtils } = BdApi;
 
-import { PLUGIN_NAME } from "./constants";
-import emojis from "./emojis.json" assert { type: "json" };
+import {
+    PLUGIN_NAME,
+    EMOJI_SRC_GITHUB_BASE,
+    EMOJI_15_SRC_GITHUB_BASE,
+    EMOJI_SRC_CDN_BASE,
+} from "./constants";
+import emojis from "./github_emojis.json" assert { type: "json" };
 
 /**
  * Logs a message prefixed by the module name to the console.
@@ -91,5 +96,13 @@ export const emojiSrcFromGlyph = (glyph) => {
 
     if (!unicode.length) return;
 
-    return emojis[unicode]?.src;
+    let src = emojis[unicode]?.src;
+
+    if (!src) return;
+
+    if (emojis[unicode].branch === "williamch") src = `${EMOJI_15_SRC_GITHUB_BASE}/${src}`;
+    else if (emojis[unicode].cdn) src = `${EMOJI_SRC_CDN_BASE}/${src}/default/100_f.png`;
+    else src = `${EMOJI_SRC_GITHUB_BASE}/${src}`;
+
+    return src;
 };
