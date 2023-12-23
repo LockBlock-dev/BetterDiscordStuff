@@ -82,6 +82,16 @@ for (const inputPath of inputPaths) {
                 },
             },
             {
+                name: "json-minify-plugin",
+                setup(build) {
+                    build.onLoad({ filter: /\.json$/ }, async (args) => {
+                        const contents = await readFile(args.path, "utf8");
+
+                        return { contents: JSON.stringify(JSON.parse(contents)), loader: "json" };
+                    });
+                },
+            },
+            {
                 name: "auto-deploy",
                 setup: (build) => {
                     build.onEnd(async (result) => {
