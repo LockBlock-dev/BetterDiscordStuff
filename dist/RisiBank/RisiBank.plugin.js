@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 4.1.1
+ * @version 4.1.2
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
@@ -39,7 +39,7 @@ var EXPRESSION_PICKER_VIEW = "risibank";
 
 // src/RisiBank/discordModules/index.js
 var {
-  Webpack: { getByKeys, getStore }
+  Webpack: { getByKeys, getModule, getStore }
 } = BdApi;
 var InputConstants = getByKeys("FORUM_CHANNEL_GUIDELINES", "CREATE_FORUM_POST", {
   searchExports: true
@@ -51,6 +51,9 @@ var Dispatcher = getByKeys("dispatch", "subscribe");
 var MessageActions = getByKeys("_sendMessage", "sendMessage");
 var Permissions = getByKeys("can", "canEveryone", "computePermissions");
 var ExpressionPicker = getByKeys("toggleExpressionPicker");
+var ChannelTextAreaButtons = getModule(
+  (m) => m?.type?.toString?.()?.includes("ChannelTextAreaButtons")
+);
 var ChannelStore = getStore("ChannelStore");
 var PendingReplyStore = getStore("PendingReplyStore");
 var SelectedChannelStore = getStore("SelectedChannelStore");
@@ -386,14 +389,10 @@ var Button_default = Button = () => {
 };
 
 // src/RisiBank/patches/TextAreaButtonsMemo.js
-var { Patcher: Patcher3, ReactUtils: ReactUtils3 } = BdApi;
+var { Patcher: Patcher3 } = BdApi;
 var patch2 = async () => {
   const TextAreaButtonsSelector = toSelector(classes_default.global.buttons);
-  await waitForSelector(TextAreaButtonsSelector);
-  const TextAreaButtonsMemo = ReactUtils3.getInternalInstance(
-    document.querySelector(TextAreaButtonsSelector)
-  )?.return?.elementType;
-  Patcher3.after(PLUGIN_NAME, TextAreaButtonsMemo, "type", (_, [props], ret) => {
+  Patcher3.after(PLUGIN_NAME, ChannelTextAreaButtons, "type", (_, [props], ret) => {
     if (props?.disabled)
       return;
     if (!props?.type?.attachments)

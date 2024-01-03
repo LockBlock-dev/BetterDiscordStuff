@@ -1,5 +1,5 @@
 const {
-    Webpack: { getByKeys, getStore },
+    Webpack: { getByKeys, getModule, getStore },
 } = BdApi;
 
 // Constants
@@ -15,6 +15,9 @@ export const Dispatcher = getByKeys("dispatch", "subscribe");
 export const MessageActions = getByKeys("_sendMessage", "sendMessage");
 export const Permissions = getByKeys("can", "canEveryone", "computePermissions");
 export const ExpressionPicker = getByKeys("toggleExpressionPicker");
+export const ChannelTextAreaButtons = getModule((m) =>
+    m?.type?.toString?.()?.includes("ChannelTextAreaButtons")
+);
 
 // Stores
 export const ChannelStore = getStore("ChannelStore");

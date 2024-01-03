@@ -1,23 +1,16 @@
-const { Patcher, ReactUtils } = BdApi;
+const { Patcher } = BdApi;
 
 import Classes from "../classes";
 import { PLUGIN_NAME } from "../constants";
-import { checkPermission, reRender, toSelector, waitForSelector } from "../utils";
-import { PermissionsConstants } from "../discordModules";
+import { checkPermission, reRender, toSelector } from "../utils";
+import { ChannelTextAreaButtons, PermissionsConstants } from "../discordModules";
 
 import RisiBankButton from "../components/Button";
 
 const patch = async () => {
     const TextAreaButtonsSelector = toSelector(Classes.global.buttons);
 
-    // prevents an error on start if the user is not in a channel
-    await waitForSelector(TextAreaButtonsSelector);
-
-    const TextAreaButtonsMemo = ReactUtils.getInternalInstance(
-        document.querySelector(TextAreaButtonsSelector)
-    )?.return?.elementType;
-
-    Patcher.after(PLUGIN_NAME, TextAreaButtonsMemo, "type", (_, [props], ret) => {
+    Patcher.after(PLUGIN_NAME, ChannelTextAreaButtons, "type", (_, [props], ret) => {
         // const emojiButton = ret.props.children[ret.props.children.length - 1];
 
         if (props?.disabled) return;
