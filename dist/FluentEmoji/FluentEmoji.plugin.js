@@ -2,7 +2,7 @@
  * @name FluentEmoji
  * @author LockBlock
  * @description Brings FluentEmoji to the Discord client.
- * @version 1.1.0
+ * @version 1.1.1
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/FluentEmoji
  */
@@ -53,34 +53,6 @@ var err = (message, error) => {
     console.groupEnd();
   }
 };
-var toSelector = (className) => {
-  return Array.isArray(className) ? `.${className.join(".")}` : `.${className}`;
-};
-var waitForSelector = async (selector) => {
-  return new Promise((resolve, reject) => {
-    const observer = new MutationObserver((mutationsList) => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === "childList" && document.querySelector(selector)) {
-          observer.disconnect();
-          resolve();
-          return;
-        }
-      }
-    });
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true
-    });
-  });
-};
-var reRender = (moduleName, selector) => {
-  const target = document.querySelector(selector);
-  if (!target)
-    return;
-  const instance = ReactUtils.getOwnerInstance(target);
-  const unpatch = Patcher.instead(moduleName, instance, "render", () => unpatch());
-  instance.forceUpdate(() => instance.forceUpdate());
-};
 var emojiSrcFromGlyph = (glyph) => {
   const unicode = [...glyph].map((cp) => cp.codePointAt(0).toString(16).padStart(4, "0")).join(" ");
   if (!unicode.length)
@@ -99,11 +71,11 @@ var emojiSrcFromGlyph = (glyph) => {
 
 // src/FluentEmoji/discordModules/index.js
 var {
-  Webpack: { getByKeys }
+  Webpack: { getByKeys, getModule }
 } = BdApi;
-var EmojiUtils = BdApi.Webpack.getByKeys(
-  "isEmojiFilteredOrLocked",
-  "filterUnsupportedEmojis"
+var EmojiUtils = getByKeys("isEmojiFilteredOrLocked", "filterUnsupportedEmojis");
+var ExpressionPickerEmoji = getModule(
+  (m) => m?.type?.toString?.()?.includes?.("emojiSpriteImage")
 );
 
 // src/FluentEmoji/patches/Emoji.js
@@ -123,22 +95,9 @@ var Emoji_default = {
   patch
 };
 
-// src/FluentEmoji/classes.js
-var {
-  Webpack: { getByKeys: getByKeys2 }
-} = BdApi;
-var classes_default = {
-  emojiSpriteImage: getByKeys2("emojiSpriteImage")
-};
-
 // src/FluentEmoji/patches/ExpressionPickerEmoji.js
-var { Patcher: Patcher3, ReactUtils: ReactUtils2 } = BdApi;
+var { Patcher: Patcher3 } = BdApi;
 var patch2 = async () => {
-  const ExpressionPickerEmojiSelector = toSelector(classes_default.emojiSpriteImage.emojiSpriteImage);
-  await waitForSelector(ExpressionPickerEmojiSelector);
-  const ExpressionPickerEmoji = ReactUtils2.getInternalInstance(
-    document.querySelector(ExpressionPickerEmojiSelector)
-  )?.return?.elementType;
   Patcher3.after(PLUGIN_NAME, ExpressionPickerEmoji, "type", (_, args, ret) => {
     if (!args || !args[0])
       return;
@@ -157,7 +116,6 @@ var patch2 = async () => {
       width: "40px"
     };
   });
-  reRender(PLUGIN_NAME, ExpressionPickerEmojiSelector);
 };
 var ExpressionPickerEmoji_default = {
   name: "ExpressionPickerEmoji",

@@ -1,7 +1,7 @@
 const { Patcher } = BdApi;
 
 import { PLUGIN_NAME } from "../constants.js";
-import { EmojiUtils } from "../discordModules/index.js";
+import { EmojiUtils } from "../discordModules";
 import { emojiSrcFromGlyph } from "../utils";
 
 const patch = async () => {

@@ -1,18 +1,10 @@
-const { Patcher, ReactUtils } = BdApi;
+const { Patcher } = BdApi;
 
-import Classes from "../classes";
 import { PLUGIN_NAME } from "../constants";
-import { reRender, toSelector, waitForSelector, emojiSrcFromGlyph } from "../utils";
+import { ExpressionPickerEmoji } from "../discordModules";
+import { emojiSrcFromGlyph } from "../utils";
 
 const patch = async () => {
-    const ExpressionPickerEmojiSelector = toSelector(Classes.emojiSpriteImage.emojiSpriteImage);
-
-    await waitForSelector(ExpressionPickerEmojiSelector);
-
-    const ExpressionPickerEmoji = ReactUtils.getInternalInstance(
-        document.querySelector(ExpressionPickerEmojiSelector)
-    )?.return?.elementType;
-
     Patcher.after(PLUGIN_NAME, ExpressionPickerEmoji, "type", (_, args, ret) => {
         if (!args || !args[0]) return;
 
@@ -34,8 +26,6 @@ const patch = async () => {
             width: "40px",
         };
     });
-
-    reRender(PLUGIN_NAME, ExpressionPickerEmojiSelector);
 };
 
 export default {

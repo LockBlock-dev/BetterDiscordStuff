@@ -1,9 +1,9 @@
 const {
-    Webpack: { getByKeys },
+    Webpack: { getByKeys, getModule },
 } = BdApi;
 
 // Misc modules
-export const EmojiUtils = BdApi.Webpack.getByKeys(
-    "isEmojiFilteredOrLocked",
-    "filterUnsupportedEmojis"
+export const EmojiUtils = getByKeys("isEmojiFilteredOrLocked", "filterUnsupportedEmojis");
+export const ExpressionPickerEmoji = getModule((m) =>
+    m?.type?.toString?.()?.includes?.("emojiSpriteImage")
 );
