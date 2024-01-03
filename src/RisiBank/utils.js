@@ -73,31 +73,6 @@ export const toSelector = (className) => {
 };
 
 /**
- * Waits for the specified selector to become available in the DOM.
- * @async
- * @param {string} selector - The CSS selector to wait for.
- * @returns {Promise<void>} - A promise that resolves when the selector is found.
- */
-export const waitForSelector = async (selector) => {
-    return new Promise((resolve, reject) => {
-        const observer = new MutationObserver((mutationsList) => {
-            for (const mutation of mutationsList) {
-                if (mutation.type === "childList" && document.querySelector(selector)) {
-                    observer.disconnect();
-                    resolve();
-                    return;
-                }
-            }
-        });
-
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true,
-        });
-    });
-};
-
-/**
  * Re-renders a React component instance.
  * @param {string} moduleName - The name of the current module.
  * @param {string} selector - The CSS selector used to find the target element.

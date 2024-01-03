@@ -15,6 +15,10 @@ export const Dispatcher = getByKeys("dispatch", "subscribe");
 export const MessageActions = getByKeys("_sendMessage", "sendMessage");
 export const Permissions = getByKeys("can", "canEveryone", "computePermissions");
 export const ExpressionPicker = getByKeys("toggleExpressionPicker");
+export const { ReferencePositionLayer } = getByKeys(
+    "ReferencePositionLayer",
+    "referencePortalAwareContains"
+);
 export const ChannelTextAreaButtons = getModule((m) =>
     m?.type?.toString?.()?.includes("ChannelTextAreaButtons")
 );

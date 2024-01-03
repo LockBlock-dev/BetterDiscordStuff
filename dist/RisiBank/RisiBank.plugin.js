@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 4.1.2
+ * @version 4.1.3
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
@@ -51,6 +51,10 @@ var Dispatcher = getByKeys("dispatch", "subscribe");
 var MessageActions = getByKeys("_sendMessage", "sendMessage");
 var Permissions = getByKeys("can", "canEveryone", "computePermissions");
 var ExpressionPicker = getByKeys("toggleExpressionPicker");
+var { ReferencePositionLayer } = getByKeys(
+  "ReferencePositionLayer",
+  "referencePortalAwareContains"
+);
 var ChannelTextAreaButtons = getModule(
   (m) => m?.type?.toString?.()?.includes("ChannelTextAreaButtons")
 );
@@ -85,23 +89,6 @@ var checkPermission = (permission, user = UserStore.getCurrentUser(), channel = 
 var toSelector = (className) => {
   return Array.isArray(className) ? `.${className.join(".")}` : `.${className}`;
 };
-var waitForSelector = async (selector) => {
-  return new Promise((resolve, reject) => {
-    const observer = new MutationObserver((mutationsList) => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === "childList" && document.querySelector(selector)) {
-          observer.disconnect();
-          resolve();
-          return;
-        }
-      }
-    });
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true
-    });
-  });
-};
 var reRender = (moduleName, selector) => {
   const target = document.querySelector(selector);
   if (!target)
@@ -109,19 +96,6 @@ var reRender = (moduleName, selector) => {
   const instance = ReactUtils.getOwnerInstance(target);
   const unpatch = Patcher.instead(moduleName, instance, "render", () => unpatch());
   instance.forceUpdate(() => instance.forceUpdate());
-};
-
-// src/RisiBank/classes.js
-var {
-  Webpack: { getByKeys: getByKeys2 }
-} = BdApi;
-var classes_default = {
-  global: getByKeys2("profileBioInput", "buttons"),
-  branding: getByKeys2("lookBlank", "grow", "colorBrand"),
-  expressionPicker: getByKeys2("contentWrapper", "navItem", "positionLayer"),
-  manual: {
-    expressionPickerChatInputButton: "expression-picker-chat-input-button"
-  }
 };
 
 // src/RisiBank/components/NavbarLabel.js
@@ -257,60 +231,58 @@ var Picker = class extends React2.Component {
 };
 
 // src/RisiBank/patches/ExpressionPicker.js
-var { Patcher: Patcher2, React: React3, ReactUtils: ReactUtils2, Utils } = BdApi;
+var { Patcher: Patcher2, React: React3, Utils } = BdApi;
 var patch = async () => {
-  const ExpressionPickerSelector = toSelector(classes_default.expressionPicker.contentWrapper);
-  await waitForSelector(ExpressionPickerSelector);
-  const ExpressionPickerInstance = ReactUtils2.getOwnerInstance(
-    document.querySelector(ExpressionPickerSelector)
-  );
-  Patcher2.after(
-    PLUGIN_NAME,
-    ExpressionPickerInstance.constructor.prototype,
-    "render",
-    (_, __, ret) => {
-      const originalChildren = ret.props?.children;
-      if (originalChildren == null)
-        return;
-      ret.props.children = (...args) => {
-        const newChildren = originalChildren(...args);
-        const body = Utils.findInTree(
-          newChildren,
-          (e) => e?.some?.((c) => c?.type === "nav"),
-          {
-            walkable: ["props", "children"]
-          }
-        );
-        if (!body)
-          return newChildren;
-        const navItems = Utils.findInTree(body[0], (e) => e?.role === "tablist", {
-          walkable: ["props", "children"]
-        })?.children;
-        if (!navItems)
-          return newChildren;
-        if (navItems.some((item) => item?.props?.viewType === EXPRESSION_PICKER_VIEW))
-          return newChildren;
-        try {
-          const elementType = navItems[0].type.type;
-          const RBNavLabel = NavbarLabel_default(elementType);
-          const idx = navItems.findIndex((item) => item?.props?.viewType === "emoji");
-          navItems.splice(idx, 0, RBNavLabel);
-          const activePicker = ExpressionPicker.useExpressionPickerStore.getState().activeView;
-          if (activePicker === EXPRESSION_PICKER_VIEW) {
-            body.push(React3.createElement(Picker, {}));
-          }
-        } catch (e) {
-          err("Failed to patch ExpressionPicker!", e);
-        }
+  Patcher2.after(PLUGIN_NAME, ReferencePositionLayer.prototype, "render", (_, __, ret) => {
+    const originalChildren = ret?.props?.children;
+    if (originalChildren == null)
+      return;
+    ret.props.children = (...args) => {
+      const newChildren = originalChildren(...args);
+      const body = Utils.findInTree(newChildren, (e) => e?.some?.((c) => c?.type === "nav"), {
+        walkable: ["props", "children"]
+      });
+      if (!body)
         return newChildren;
-      };
-    }
-  );
-  ExpressionPickerInstance.forceUpdate();
+      const navItems = Utils.findInTree(body[0], (e) => e?.role === "tablist", {
+        walkable: ["props", "children"]
+      })?.children;
+      if (!navItems)
+        return newChildren;
+      if (navItems.some((item) => item?.props?.viewType === EXPRESSION_PICKER_VIEW))
+        return newChildren;
+      try {
+        const elementType = navItems[0].type.type;
+        const RBNavLabel = NavbarLabel_default(elementType);
+        const idx = navItems.findIndex((item) => item?.props?.viewType === "emoji");
+        navItems.splice(idx, 0, RBNavLabel);
+        const activePicker = ExpressionPicker.useExpressionPickerStore.getState().activeView;
+        if (activePicker === EXPRESSION_PICKER_VIEW) {
+          body.push(React3.createElement(Picker, {}));
+        }
+      } catch (e) {
+        err("Failed to patch ExpressionPicker!", e);
+      }
+      return newChildren;
+    };
+  });
 };
 var ExpressionPicker_default = {
   name: "ExpressionPicker",
   patch
+};
+
+// src/RisiBank/classes.js
+var {
+  Webpack: { getByKeys: getByKeys2 }
+} = BdApi;
+var classes_default = {
+  global: getByKeys2("profileBioInput", "buttons"),
+  branding: getByKeys2("lookBlank", "grow", "colorBrand"),
+  expressionPicker: getByKeys2("contentWrapper", "navItem", "positionLayer"),
+  manual: {
+    expressionPickerChatInputButton: "expression-picker-chat-input-button"
+  }
 };
 
 // src/RisiBank/components/Button.js
