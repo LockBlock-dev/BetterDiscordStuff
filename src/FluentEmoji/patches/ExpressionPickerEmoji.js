@@ -5,27 +5,32 @@ import { ExpressionPickerEmoji } from "../discordModules";
 import { emojiSrcFromGlyph } from "../utils";
 
 const patch = async () => {
-    Patcher.after(PLUGIN_NAME, ExpressionPickerEmoji, "type", (_, args, ret) => {
-        if (!args || !args[0]) return;
+    Patcher.after(
+        PLUGIN_NAME,
+        ExpressionPickerEmoji,
+        "type",
+        (_, args, ret) => {
+            if (!args || !args[0]) return;
 
-        const glyph = args[0]?.emoji?.surrogates;
+            const glyph = args[0]?.emoji?.surrogates;
 
-        if (!glyph) return;
+            if (!glyph) return;
 
-        const newSrc = emojiSrcFromGlyph(glyph);
+            const newSrc = emojiSrcFromGlyph(glyph);
 
-        // unsupported emoji
-        if (!newSrc) return;
+            // unsupported emoji
+            if (!newSrc) return;
 
-        if (!ret?.props?.style) return;
+            if (!ret?.props?.children?.[0]?.props?.style) return;
 
-        ret.props.style = {
-            backgroundImage: `url("${newSrc}")`,
-            backgroundSize: "contain",
-            height: "40px",
-            width: "40px",
-        };
-    });
+            ret.props.children[0].props.style = {
+                backgroundImage: `url("${newSrc}")`,
+                backgroundSize: "contain",
+                height: "40px",
+                width: "40px",
+            };
+        }
+    );
 };
 
 export default {

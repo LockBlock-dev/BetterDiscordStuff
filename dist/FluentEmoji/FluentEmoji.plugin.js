@@ -2,7 +2,7 @@
  * @name FluentEmoji
  * @author LockBlock
  * @description Brings FluentEmoji to the Discord client.
- * @version 1.1.1
+ * @version 1.1.2
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/FluentEmoji
  */
@@ -43,10 +43,18 @@ var github_emojis_default = { "2614": { glyph: "\u2614", src: "Umbrella%20with%2
 // src/FluentEmoji/utils.js
 var { Patcher, ReactUtils } = BdApi;
 var log = (message) => {
-  console.log(`%c[${PLUGIN_NAME}]%c ${message}`, "color: #3a71c1; font-weight: 700;", "");
+  console.log(
+    `%c[${PLUGIN_NAME}]%c ${message}`,
+    "color: #3a71c1; font-weight: 700;",
+    ""
+  );
 };
 var err = (message, error) => {
-  console.log(`%c[${PLUGIN_NAME}]%c ${message}`, "color: red; font-weight: 700;", "");
+  console.log(
+    `%c[${PLUGIN_NAME}]%c ${message}`,
+    "color: red; font-weight: 700;",
+    ""
+  );
   if (error) {
     console.groupCollapsed("%cError: " + error.message, "color: red;");
     console.error(error.stack);
@@ -98,24 +106,29 @@ var Emoji_default = {
 // src/FluentEmoji/patches/ExpressionPickerEmoji.js
 var { Patcher: Patcher3 } = BdApi;
 var patch2 = async () => {
-  Patcher3.after(PLUGIN_NAME, ExpressionPickerEmoji, "type", (_, args, ret) => {
-    if (!args || !args[0])
-      return;
-    const glyph = args[0]?.emoji?.surrogates;
-    if (!glyph)
-      return;
-    const newSrc = emojiSrcFromGlyph(glyph);
-    if (!newSrc)
-      return;
-    if (!ret?.props?.style)
-      return;
-    ret.props.style = {
-      backgroundImage: `url("${newSrc}")`,
-      backgroundSize: "contain",
-      height: "40px",
-      width: "40px"
-    };
-  });
+  Patcher3.after(
+    PLUGIN_NAME,
+    ExpressionPickerEmoji,
+    "type",
+    (_, args, ret) => {
+      if (!args || !args[0])
+        return;
+      const glyph = args[0]?.emoji?.surrogates;
+      if (!glyph)
+        return;
+      const newSrc = emojiSrcFromGlyph(glyph);
+      if (!newSrc)
+        return;
+      if (!ret?.props?.children?.[0]?.props?.style)
+        return;
+      ret.props.children[0].props.style = {
+        backgroundImage: `url("${newSrc}")`,
+        backgroundSize: "contain",
+        height: "40px",
+        width: "40px"
+      };
+    }
+  );
 };
 var ExpressionPickerEmoji_default = {
   name: "ExpressionPickerEmoji",
