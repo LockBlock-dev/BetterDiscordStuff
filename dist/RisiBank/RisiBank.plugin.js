@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 4.1.3
+ * @version 4.1.4
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/risibank
  */
@@ -56,7 +56,7 @@ var { ReferencePositionLayer } = getByKeys(
   "referencePortalAwareContains"
 );
 var ChannelTextAreaButtons = getModule(
-  (m) => m?.type?.toString?.()?.includes("ChannelTextAreaButtons")
+  (m) => m.type?.toString?.().includes(".default.isSubmitButtonEnabled", ".default.getActiveCommand")
 );
 var ChannelStore = getStore("ChannelStore");
 var PendingReplyStore = getStore("PendingReplyStore");
@@ -279,7 +279,6 @@ var {
 var classes_default = {
   global: getByKeys2("profileBioInput", "buttons"),
   branding: getByKeys2("lookBlank", "grow", "colorBrand"),
-  expressionPicker: getByKeys2("contentWrapper", "navItem", "positionLayer"),
   manual: {
     expressionPickerChatInputButton: "expression-picker-chat-input-button"
   }
@@ -364,6 +363,7 @@ var Button_default = Button = () => {
 var { Patcher: Patcher3 } = BdApi;
 var patch2 = async () => {
   const TextAreaButtonsSelector = toSelector(classes_default.global.buttons);
+  console.log(ChannelTextAreaButtons);
   Patcher3.after(PLUGIN_NAME, ChannelTextAreaButtons, "type", (_, [props], ret) => {
     if (props?.disabled)
       return;
