@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "jsx": "preserve",
+        "lib": [
+            "DOM",
+            "DOM.Iterable",
+            "esnext",
+            "esnext.array",
+            "esnext.asynciterable",
+            "esnext.symbol"
+        ],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": false,
+        "strict": true,
+        "target": "ESNEXT"
+    },
+    "include": ["src/*"]
+}

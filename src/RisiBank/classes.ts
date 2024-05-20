@@ -8,7 +8,8 @@ const {
 export default {
     global: getByKeys("profileBioInput", "buttons"),
     branding: getByKeys("lookBlank", "grow", "colorBrand"),
-    manual: {
-        expressionPickerChatInputButton: "expression-picker-chat-input-button",
+    expressionPicker: {
+        chatInputButton: getByKeys("CHAT_INPUT_BUTTON_CLASSNAME")
+            .CHAT_INPUT_BUTTON_CLASSNAME,
     },
 };

@@ -1,10 +1,10 @@
 const { Patcher } = BdApi;
 
 import { PLUGIN_NAME } from "../constants.js";
-import { EmojiUtils } from "../discordModules";
-import { emojiSrcFromGlyph } from "../utils";
+import { EmojiUtils } from "../discordModules.js";
+import { emojiSrcFromGlyph } from "../utils.js";
 
-const patch = async () => {
+const patch = () => {
     Patcher.after(PLUGIN_NAME, EmojiUtils, "getURL", (_, args, ret) => {
         if (!args || !args.length) return;
 

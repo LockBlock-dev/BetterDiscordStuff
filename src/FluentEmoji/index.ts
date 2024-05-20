@@ -1,19 +1,23 @@
 const { Patcher, UI } = BdApi;
 
+import { PLUGIN_NAME } from "./constants";
 import { log, warn, err } from "./utils";
 import patches from "./patches";
+import type { Meta, Plugin } from "betterdiscord";
 
 /**
  * Represents the FluentEmoji plugin.
  * @class
  */
-export default class FluentEmoji {
+export default class FluentEmoji implements Plugin {
+    meta: Meta;
+
     /**
      * Constructs a new instance of the FluentEmoji plugin class.
-     * @param {object} meta - The meta information to initialize the instance.
+     * @param {Meta} meta - The meta information to initialize the instance.
      * @constructor
      */
-    constructor(meta) {
+    constructor(meta: Meta) {
         /**
          * The meta information associated with the instance.
          * @type {object}
@@ -23,15 +27,14 @@ export default class FluentEmoji {
 
     /**
      * Initializes the plugin.
-     * @async
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    async init() {
+    init() {
         patches.forEach((patchModule) => {
             try {
                 patchModule.patch();
             } catch (e) {
-                err(`Failed to run patch ${patchModule.name}!`, e);
+                err(PLUGIN_NAME, `Failed to run patch ${patchModule.name}!`, e);
             }
         });
     }
@@ -41,12 +44,12 @@ export default class FluentEmoji {
      * @returns {void}
      */
     start() {
-        log(`version ${this.meta.version} has started.`);
+        log(PLUGIN_NAME, `version ${this.meta.version} has started.`);
 
         try {
             this.init();
         } catch (e) {
-            err("Failed to initialize!", e);
+            err(PLUGIN_NAME, "Failed to initialize!", e);
             UI.showToast(`Failed to initialize ${this.meta.name}!`, {
                 type: "error",
             });
@@ -60,6 +63,6 @@ export default class FluentEmoji {
     stop() {
         Patcher.unpatchAll(this.meta.name);
 
-        log(`version ${this.meta.version} has stopped.`);
+        log(PLUGIN_NAME, `version ${this.meta.version} has stopped.`);
     }
 }

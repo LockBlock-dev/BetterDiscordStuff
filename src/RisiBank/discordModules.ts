@@ -3,9 +3,13 @@ const {
 } = BdApi;
 
 // Constants
-export const InputConstants = getByKeys("FORUM_CHANNEL_GUIDELINES", "CREATE_FORUM_POST", {
-    searchExports: true,
-});
+export const InputConstants = getByKeys(
+    "FORUM_CHANNEL_GUIDELINES",
+    "CREATE_FORUM_POST",
+    {
+        searchExports: true,
+    }
+);
 export const PermissionsConstants = getByKeys("ADD_REACTIONS", "EMBED_LINKS", {
     searchExports: true,
 });
@@ -13,14 +17,26 @@ export const PermissionsConstants = getByKeys("ADD_REACTIONS", "EMBED_LINKS", {
 // Misc modules
 export const Dispatcher = getByKeys("dispatch", "subscribe");
 export const MessageActions = getByKeys("_sendMessage", "sendMessage");
-export const Permissions = getByKeys("can", "canEveryone", "computePermissions");
+export const Permissions = getByKeys(
+    "can",
+    "canEveryone",
+    "computePermissions"
+);
 export const ExpressionPicker = getByKeys("toggleExpressionPicker");
 export const { ReferencePositionLayer } = getByKeys(
     "ReferencePositionLayer",
-    "referencePortalAwareContains",
+    "referencePortalAwareContains"
 );
 export const ChannelTextAreaButtons = getModule((m) =>
-    m.type?.toString?.().includes(".default.isSubmitButtonEnabled", ".default.getActiveCommand"),
+    m.type
+        ?.toString?.()
+        .includes(".default.isSubmitButtonEnabled", ".default.getActiveCommand")
+);
+export const ComponentDispatch = getModule(
+    (m) =>
+        m.dispatchToLastSubscribed &&
+        m.emitter?.listeners("TEXTAREA_FOCUS").length,
+    { searchExports: true }
 );
 
 // Stores

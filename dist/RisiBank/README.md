@@ -1,4 +1,4 @@
-# RisiBank ![Version Badge](https://img.shields.io/badge/version-4.1.4-blue)
+# RisiBank ![Version Badge](https://img.shields.io/badge/version-4.1.5-blue)
 
 Brings [RisiBank](https://risibank.fr/) to the Discord client.
 

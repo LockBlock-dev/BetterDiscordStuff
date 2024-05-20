@@ -18,9 +18,9 @@ const __dirname = process.cwd();
 
 // find sources
 const sourceFolder = path.resolve(__dirname, "./src");
-const pluginsSourceEntries = readdirSync(sourceFolder, { withFileTypes: true }).filter((entry) =>
-    entry.isDirectory()
-);
+const pluginsSourceEntries = readdirSync(sourceFolder, {
+    withFileTypes: true,
+}).filter((entry) => entry.isDirectory());
 
 // parse args
 const args = minimist(process.argv.slice(2), { boolean: ["dev", "watch"] });
@@ -29,7 +29,9 @@ const args = minimist(process.argv.slice(2), { boolean: ["dev", "watch"] });
 let inputPaths = [];
 
 if (!args._.length) {
-    inputPaths = pluginsSourceEntries.map((entry) => path.resolve(sourceFolder, entry.name));
+    inputPaths = pluginsSourceEntries.map((entry) =>
+        path.resolve(sourceFolder, entry.name)
+    );
 } else {
     for (const name of args._) {
         const entry = pluginsSourceEntries.find(
@@ -71,6 +73,7 @@ for (const inputPath of inputPaths) {
         jsxFactory: "BdApi.React.createElement",
         jsxFragment: "BdApi.React.Fragment",
         logLevel: "info",
+        tsconfig: "./tsconfig.esbuild.json",
         plugins: [
             {
                 name: "manifest-banner",
@@ -87,7 +90,10 @@ for (const inputPath of inputPaths) {
                     build.onLoad({ filter: /\.json$/ }, async (args) => {
                         const contents = await readFile(args.path, "utf8");
 
-                        return { contents: JSON.stringify(JSON.parse(contents)), loader: "json" };
+                        return {
+                            contents: JSON.stringify(JSON.parse(contents)),
+                            loader: "json",
+                        };
                     });
                 },
             },
@@ -123,11 +129,16 @@ for (const inputPath of inputPaths) {
                                 break;
                         }
 
-                        const deployPath = path.resolve(deployDir, outputFilename);
+                        const deployPath = path.resolve(
+                            deployDir,
+                            outputFilename
+                        );
                         const f = await open(deployPath, "w");
 
                         try {
-                            await f.write(await readFile(build.initialOptions.outfile));
+                            await f.write(
+                                await readFile(build.initialOptions.outfile)
+                            );
                             success("Deployed", pluginFolder);
                         } finally {
                             f.close();

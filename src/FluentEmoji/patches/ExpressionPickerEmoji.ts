@@ -4,7 +4,7 @@ import { PLUGIN_NAME } from "../constants";
 import { ExpressionPickerEmoji } from "../discordModules";
 import { emojiSrcFromGlyph } from "../utils";
 
-const patch = async () => {
+const patch = () => {
     Patcher.after(
         PLUGIN_NAME,
         ExpressionPickerEmoji,
@@ -12,7 +12,7 @@ const patch = async () => {
         (_, args, ret) => {
             if (!args || !args[0]) return;
 
-            const glyph = args[0]?.emoji?.surrogates;
+            const glyph = (args[0] as any)?.emoji?.surrogates;
 
             if (!glyph) return;
 
