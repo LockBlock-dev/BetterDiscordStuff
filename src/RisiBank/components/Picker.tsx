@@ -1,7 +1,7 @@
 const { useEffect, useMemo, useCallback } =
     BdApi.React as typeof import("react");
 
-import React, { type ReactNode } from "react";
+import React from "react";
 import { BASE_API_URI, EXPRESSION_PICKER_VIEW } from "../constants";
 import {
     ComponentDispatch,
@@ -13,10 +13,9 @@ import {
 } from "../discordModules";
 
 /**
- * Represents a RisiBank ExpressionPicker view.
- * @returns {ReactNode} The React element representing the RisiBank picker.
+ * Represents the RisiBank ExpressionPicker view.
  */
-export default function Picker(): ReactNode {
+function Picker() {
     /**
      * The iframe URL as a string.
      */
@@ -124,3 +123,5 @@ export default function Picker(): ReactNode {
         </div>
     );
 }
+
+export default Picker;

@@ -1,16 +1,19 @@
-import React, { type ReactNode } from "react";
-import { ExpressionPicker, InputConstants } from "../discordModules";
+import React from "react";
+import { ExpressionPicker } from "../discordModules";
 import {
     EXPRESSION_PICKER_VIEW,
     TEXTAREA_BUTTON_ARIA_LABEL,
 } from "../constants";
 import Classes from "../classes";
 
+interface ButtonProps {
+    channelType: any;
+}
+
 /**
- * Represents a RisiBank TextArea button.
- * @returns {ReactNode} The React element representing the button.
+ * Represents the RisiBank TextArea button.
  */
-export default function Button(): ReactNode {
+export default function Button({ channelType }: ButtonProps) {
     return (
         <div
             className={[
@@ -24,7 +27,7 @@ export default function Button(): ReactNode {
                 onClick={() => {
                     ExpressionPicker.toggleExpressionPicker(
                         EXPRESSION_PICKER_VIEW,
-                        InputConstants.NORMAL
+                        channelType
                     );
                 }}
                 className={[

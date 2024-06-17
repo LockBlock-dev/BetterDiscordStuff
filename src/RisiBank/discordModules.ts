@@ -3,16 +3,10 @@ const {
 } = BdApi;
 
 // Constants
-export const InputConstants = getByKeys(
-    "FORUM_CHANNEL_GUIDELINES",
-    "CREATE_FORUM_POST",
-    {
-        searchExports: true,
-    }
-);
 export const PermissionsConstants = getByKeys("ADD_REACTIONS", "EMBED_LINKS", {
     searchExports: true,
 });
+export const ChannelTypes = getByKeys("ChannelTypes").ChannelTypes;
 
 // Misc modules
 export const Dispatcher = getByKeys("dispatch", "subscribe");

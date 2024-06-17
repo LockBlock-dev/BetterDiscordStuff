@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 4.1.5
+ * @version 4.1.6
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/src/RisiBank
  */
@@ -42,16 +42,10 @@ var EXPRESSION_PICKER_VIEW = "risibank";
 var {
   Webpack: { getByKeys, getModule, getStore }
 } = BdApi;
-var InputConstants = getByKeys(
-  "FORUM_CHANNEL_GUIDELINES",
-  "CREATE_FORUM_POST",
-  {
-    searchExports: true
-  }
-);
 var PermissionsConstants = getByKeys("ADD_REACTIONS", "EMBED_LINKS", {
   searchExports: true
 });
+var ChannelTypes = getByKeys("ChannelTypes").ChannelTypes;
 var Dispatcher = getByKeys("dispatch", "subscribe");
 var MessageActions = getByKeys("_sendMessage", "sendMessage");
 var Permissions = getByKeys(
@@ -128,7 +122,9 @@ var checkPermission = (permission, user = UserStore.getCurrentUser(), channel = 
 
 // src/RisiBank/components/NavbarLabel.tsx
 var { useMemo } = BdApi.React;
-function NavbarLabel(OriginalComponent) {
+function NavbarLabel({
+  elementType: OriginalComponent
+}) {
   const expressionPickerState = ExpressionPicker.useExpressionPickerStore.getState();
   const selected = useMemo(
     () => EXPRESSION_PICKER_VIEW === expressionPickerState.activeView,
@@ -237,6 +233,7 @@ function Picker() {
     )
   );
 }
+var Picker_default = Picker;
 
 // src/RisiBank/patches/ExpressionPicker.tsx
 var { Patcher: Patcher2, Utils } = BdApi;
@@ -275,17 +272,20 @@ var patch = () => {
           return newChildren;
         try {
           const elementType = navItems[0].type.type;
-          const RBNavLabel = NavbarLabel(elementType);
           const idx = navItems.findIndex(
             (item) => item?.props?.viewType === "emoji"
           );
-          navItems.splice(idx, 0, RBNavLabel);
+          navItems.splice(
+            idx,
+            0,
+            /* @__PURE__ */ BdApi.React.createElement(NavbarLabel, { elementType })
+          );
           const activePicker = ExpressionPicker.useExpressionPickerStore.getState().activeView;
           if (activePicker === EXPRESSION_PICKER_VIEW) {
-            body.push(/* @__PURE__ */ BdApi.React.createElement(Picker, null));
+            body.push(/* @__PURE__ */ BdApi.React.createElement(Picker_default, null));
           }
         } catch (e) {
-          err("Failed to patch ExpressionPicker!", e);
+          err(PLUGIN_NAME, "Failed to patch ExpressionPicker!", e);
         }
         return newChildren;
       };
@@ -310,7 +310,7 @@ var classes_default = {
 };
 
 // src/RisiBank/components/Button.tsx
-function Button() {
+function Button({ channelType }) {
   return /* @__PURE__ */ BdApi.React.createElement(
     "div",
     {
@@ -327,7 +327,7 @@ function Button() {
         onClick: () => {
           ExpressionPicker.toggleExpressionPicker(
             EXPRESSION_PICKER_VIEW,
-            InputConstants.NORMAL
+            channelType
           );
         },
         className: [
@@ -407,7 +407,7 @@ function Button() {
   );
 }
 
-// src/RisiBank/patches/TextAreaButtonsMemo.ts
+// src/RisiBank/patches/TextAreaButtonsMemo.tsx
 var { Patcher: Patcher3 } = BdApi;
 var patch2 = () => {
   const TextAreaButtonsSelector = toSelector(classes_default.global.buttons);
@@ -421,8 +421,13 @@ var patch2 = () => {
         return;
       if (!type?.attachments)
         return;
-      if (channel?.type === 1 || channel?.type === 3 || checkPermission(PermissionsConstants.EMBED_LINKS))
-        ret.props.children.splice(-1, 0, Button());
+      if (channel?.type === ChannelTypes.DM || channel?.type === ChannelTypes.GROUP_DM || checkPermission(PermissionsConstants.EMBED_LINKS)) {
+        ret.props.children.splice(
+          -1,
+          0,
+          /* @__PURE__ */ BdApi.React.createElement(Button, { channelType: type })
+        );
+      }
     }
   );
   reRender(PLUGIN_NAME, TextAreaButtonsSelector);

@@ -52,13 +52,15 @@ const patch = () => {
                 try {
                     const elementType = navItems[0].type.type;
 
-                    const RBNavLabel = RisiBankNavLabel(elementType);
-
                     const idx = navItems.findIndex(
                         (item) => item?.props?.viewType === "emoji"
                     );
 
-                    navItems.splice(idx, 0, RBNavLabel);
+                    navItems.splice(
+                        idx,
+                        0,
+                        <RisiBankNavLabel elementType={elementType} />
+                    );
 
                     const activePicker =
                         ExpressionPicker.useExpressionPickerStore.getState()
@@ -68,7 +70,7 @@ const patch = () => {
                         body.push(<RisiBankPicker />);
                     }
                 } catch (e) {
-                    err("Failed to patch ExpressionPicker!", e);
+                    err(PLUGIN_NAME, "Failed to patch ExpressionPicker!", e);
                 }
 
                 return newChildren;

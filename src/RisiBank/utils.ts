@@ -14,7 +14,7 @@ export const getCurrentChannel = () => {
 };
 
 /**
- * Computer a permission for an user in a channel.
+ * Computes a permission for an user in a channel.
  * @param {bigint} permission - The permission flag to check.
  * @param {object} user - The user for whom the permission is checked. Defaults to the current user.
  * @param {object} channel - The channel in which the permission is checked. Defaults to the current channel.

@@ -1,10 +1,12 @@
 const { Patcher } = BdApi;
 
+import React from "react";
 import Classes from "../classes";
 import { PLUGIN_NAME } from "../constants";
 import { checkPermission, reRender, toSelector } from "../utils";
 import {
     ChannelTextAreaButtons,
+    ChannelTypes,
     PermissionsConstants,
 } from "../discordModules";
 
@@ -29,14 +31,18 @@ const patch = () => {
             // prevents the button to be added in profile settings
             if (!type?.attachments) return;
 
-            // if the channel is DM or GROUP_DM or user has EMBED_LINKS permission
             if (
-                channel?.type === 1 ||
-                channel?.type === 3 ||
+                channel?.type === ChannelTypes.DM ||
+                channel?.type === ChannelTypes.GROUP_DM ||
                 checkPermission(PermissionsConstants.EMBED_LINKS)
-            )
+            ) {
                 // inserts the RisiBank button just between sticker and emoji button
-                ret.props.children.splice(-1, 0, RisiBankButton());
+                ret.props.children.splice(
+                    -1,
+                    0,
+                    <RisiBankButton channelType={type} />
+                );
+            }
         }
     );
 

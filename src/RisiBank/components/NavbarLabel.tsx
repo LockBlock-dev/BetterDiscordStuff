@@ -1,15 +1,19 @@
 const { useMemo } = BdApi.React as typeof import("react");
 
-import React, { type ReactNode } from "react";
+import React, { type ComponentType } from "react";
 import { ExpressionPicker } from "../discordModules";
 import { EXPRESSION_PICKER_VIEW, PLUGIN_NAME } from "../constants";
 
+interface NavbarLabelProps {
+    elementType: ComponentType<any>;
+}
+
 /**
- * Represents a RisiBank expression picker navbar label.
- * @param {unknown} OriginalComponent
- * @returns {ReactNode} The React element representing the navbar label.
+ * Represents the RisiBank expression picker navbar label.
  */
-export default function NavbarLabel(OriginalComponent): ReactNode {
+export default function NavbarLabel({
+    elementType: OriginalComponent,
+}: NavbarLabelProps) {
     const expressionPickerState =
         ExpressionPicker.useExpressionPickerStore.getState();
 
