@@ -1,5 +1,5 @@
 import React from "react";
-import { ExpressionPicker } from "../discordModules";
+import ExpressionPicker from "../discordModules/ExpressionPickerStore";
 import {
     EXPRESSION_PICKER_VIEW,
     TEXTAREA_BUTTON_ARIA_LABEL,
@@ -13,7 +13,7 @@ interface ButtonProps {
 /**
  * Represents the RisiBank TextArea button.
  */
-export default function Button({ channelType }: ButtonProps) {
+function Button({ channelType }: ButtonProps) {
     return (
         <div
             className={[
@@ -81,3 +81,5 @@ export default function Button({ channelType }: ButtonProps) {
         </div>
     );
 }
+
+export default Button;

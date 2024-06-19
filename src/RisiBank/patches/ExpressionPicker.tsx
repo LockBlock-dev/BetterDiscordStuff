@@ -3,7 +3,8 @@ const { Patcher, Utils } = BdApi;
 import React from "react";
 import { EXPRESSION_PICKER_VIEW, PLUGIN_NAME } from "../constants";
 import { err } from "../utils";
-import { ExpressionPicker, ReferencePositionLayer } from "../discordModules";
+import { ReferencePositionLayer } from "../discordModules";
+import ExpressionPicker from "../discordModules/ExpressionPickerStore";
 
 import RisiBankNavLabel from "../components/NavbarLabel";
 import RisiBankPicker from "../components/Picker";

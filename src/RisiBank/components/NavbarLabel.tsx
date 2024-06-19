@@ -1,7 +1,7 @@
 const { useMemo } = BdApi.React as typeof import("react");
 
 import React, { type ComponentType } from "react";
-import { ExpressionPicker } from "../discordModules";
+import ExpressionPicker from "../discordModules/ExpressionPickerStore";
 import { EXPRESSION_PICKER_VIEW, PLUGIN_NAME } from "../constants";
 
 interface NavbarLabelProps {
@@ -11,9 +11,7 @@ interface NavbarLabelProps {
 /**
  * Represents the RisiBank expression picker navbar label.
  */
-export default function NavbarLabel({
-    elementType: OriginalComponent,
-}: NavbarLabelProps) {
+function NavbarLabel({ elementType: OriginalComponent }: NavbarLabelProps) {
     const expressionPickerState =
         ExpressionPicker.useExpressionPickerStore.getState();
 
@@ -34,3 +32,5 @@ export default function NavbarLabel({
         </OriginalComponent>
     );
 }
+
+export default NavbarLabel;

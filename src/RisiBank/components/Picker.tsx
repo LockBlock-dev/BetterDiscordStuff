@@ -6,11 +6,11 @@ import { BASE_API_URI, EXPRESSION_PICKER_VIEW } from "../constants";
 import {
     ComponentDispatch,
     Dispatcher,
-    ExpressionPicker,
     MessageActions,
     PendingReplyStore,
     SelectedChannelStore,
 } from "../discordModules";
+import ExpressionPicker from "../discordModules/ExpressionPickerStore";
 
 /**
  * Represents the RisiBank ExpressionPicker view.

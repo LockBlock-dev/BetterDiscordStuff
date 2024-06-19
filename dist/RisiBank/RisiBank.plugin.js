@@ -2,7 +2,7 @@
  * @name RisiBank
  * @author LockBlock
  * @description Brings RisiBank to the Discord client.
- * @version 4.1.6
+ * @version 4.1.7
  * @donate https://ko-fi.com/lockblock
  * @source https://github.com/LockBlock-dev/BetterDiscordStuff/tree/master/src/RisiBank
  */
@@ -38,28 +38,25 @@ var BASE_API_URI = "https://risibank.fr";
 var TEXTAREA_BUTTON_ARIA_LABEL = `Open ${PLUGIN_NAME} sticker picker`;
 var EXPRESSION_PICKER_VIEW = "risibank";
 
-// src/RisiBank/discordModules.ts
+// src/RisiBank/discordModules/index.ts
 var {
   Webpack: { getByKeys, getModule, getStore }
 } = BdApi;
 var PermissionsConstants = getByKeys("ADD_REACTIONS", "EMBED_LINKS", {
   searchExports: true
 });
-var ChannelTypes = getByKeys("ChannelTypes").ChannelTypes;
+var ChannelTypes = getByKeys("DM", "GROUP_DM", "GUILD_CATEGORY", {
+  searchExports: true
+});
 var Dispatcher = getByKeys("dispatch", "subscribe");
 var MessageActions = getByKeys("_sendMessage", "sendMessage");
-var Permissions = getByKeys(
-  "can",
-  "canEveryone",
-  "computePermissions"
-);
-var ExpressionPicker = getByKeys("toggleExpressionPicker");
+var Permissions = getByKeys("computePermissions");
 var { ReferencePositionLayer } = getByKeys(
   "ReferencePositionLayer",
   "referencePortalAwareContains"
 );
 var ChannelTextAreaButtons = getModule(
-  (m) => m.type?.toString?.().includes(".default.isSubmitButtonEnabled", ".default.getActiveCommand")
+  (m) => m.type?.toString?.().includes(".isSubmitButtonEnabled", ".getActiveCommand")
 );
 var ComponentDispatch = getModule(
   (m) => m.dispatchToLastSubscribed && m.emitter?.listeners("TEXTAREA_FOCUS").length,
@@ -68,7 +65,6 @@ var ComponentDispatch = getModule(
 var ChannelStore = getStore("ChannelStore");
 var PendingReplyStore = getStore("PendingReplyStore");
 var SelectedChannelStore = getStore("SelectedChannelStore");
-var UserStore = getStore("UserStore");
 
 // src/common/utils.ts
 var { Patcher, ReactUtils } = BdApi;
@@ -112,20 +108,68 @@ var reRender = (pluginName, selector) => {
 var getCurrentChannel = () => {
   return ChannelStore.getChannel(SelectedChannelStore.getChannelId());
 };
-var checkPermission = (permission, user = UserStore.getCurrentUser(), channel = getCurrentChannel()) => {
-  return Permissions.can({
-    permission,
-    user,
-    context: channel
-  });
+var checkPermission = (permission, channel = getCurrentChannel(), user = void 0) => {
+  return Permissions.can(permission, channel, user);
 };
+
+// src/RisiBank/discordModules/ExpressionPickerStore.ts
+var {
+  Webpack: { getModule: getModule2 }
+} = BdApi;
+var ExpressionPickerStore = class {
+  /**
+   * Returns the internal Discord ExpressionPickerStore.
+   * @returns {void}
+   */
+  useExpressionPickerStore = {
+    getState: () => {
+      throw Error("Not implemented");
+    }
+  };
+  /**
+   * Toggles the Expression Picker with the specified view and view type.
+   * @param {string} activeView - The active view to be displayed in the Expression Picker.
+   * @param {object} activeViewType - The type of the active view.
+   * @returns {void}
+   */
+  toggleExpressionPicker = (activeView, activeViewType) => {
+    throw Error("Not implemented");
+  };
+  /**
+   * Closes the Expression Picker.
+   * @param {object} [activeViewType] - The type of the active view.
+   * @returns {void}
+   */
+  closeExpressionPicker = (activeViewType) => {
+    throw Error("Not implemented");
+  };
+  /**
+   * Constructs a new instance of the ExpressionPickerStore class.
+   * @constructor
+   */
+  constructor() {
+    const ExpressionPickerModule = getModule2(
+      (m) => Object.keys(m).some(
+        (key) => typeof m[key] === "function" && m[key].toString().includes("isSearchSuggestion")
+      )
+    );
+    Object.values(ExpressionPickerModule).forEach((fn) => {
+      if (fn.getState)
+        this.useExpressionPickerStore = fn;
+      else if (/getState\(\)\.activeView.*===.*\?.*:/.test(fn.toString()))
+        this.toggleExpressionPicker = fn;
+      else if (fn.toString().includes("activeView:null,activeViewType:null"))
+        this.closeExpressionPicker = fn;
+    });
+  }
+};
+var EPS = new ExpressionPickerStore();
+var ExpressionPickerStore_default = EPS;
 
 // src/RisiBank/components/NavbarLabel.tsx
 var { useMemo } = BdApi.React;
-function NavbarLabel({
-  elementType: OriginalComponent
-}) {
-  const expressionPickerState = ExpressionPicker.useExpressionPickerStore.getState();
+function NavbarLabel({ elementType: OriginalComponent }) {
+  const expressionPickerState = ExpressionPickerStore_default.useExpressionPickerStore.getState();
   const selected = useMemo(
     () => EXPRESSION_PICKER_VIEW === expressionPickerState.activeView,
     [EXPRESSION_PICKER_VIEW, expressionPickerState]
@@ -142,6 +186,7 @@ function NavbarLabel({
     PLUGIN_NAME
   );
 }
+var NavbarLabel_default = NavbarLabel;
 
 // src/RisiBank/components/Picker.tsx
 var { useEffect, useMemo: useMemo2, useCallback } = BdApi.React;
@@ -167,7 +212,7 @@ function Picker() {
       } = e;
       if (type !== "risibank-media-selected" || !media)
         return;
-      ExpressionPicker.closeExpressionPicker();
+      ExpressionPickerStore_default.closeExpressionPicker();
       let mediaUrl = media.cache_url;
       if (mediaUrl.includes("full"))
         mediaUrl = mediaUrl.replace("full", "thumb");
@@ -198,7 +243,7 @@ function Picker() {
     },
     [
       BASE_API_URI,
-      ExpressionPicker,
+      ExpressionPickerStore_default,
       SelectedChannelStore,
       PendingReplyStore,
       MessageActions,
@@ -278,9 +323,9 @@ var patch = () => {
           navItems.splice(
             idx,
             0,
-            /* @__PURE__ */ BdApi.React.createElement(NavbarLabel, { elementType })
+            /* @__PURE__ */ BdApi.React.createElement(NavbarLabel_default, { elementType })
           );
-          const activePicker = ExpressionPicker.useExpressionPickerStore.getState().activeView;
+          const activePicker = ExpressionPickerStore_default.useExpressionPickerStore.getState().activeView;
           if (activePicker === EXPRESSION_PICKER_VIEW) {
             body.push(/* @__PURE__ */ BdApi.React.createElement(Picker_default, null));
           }
@@ -305,7 +350,7 @@ var classes_default = {
   global: getByKeys2("profileBioInput", "buttons"),
   branding: getByKeys2("lookBlank", "grow", "colorBrand"),
   expressionPicker: {
-    chatInputButton: getByKeys2("CHAT_INPUT_BUTTON_CLASSNAME").CHAT_INPUT_BUTTON_CLASSNAME
+    chatInputButton: "expression-picker-chat-input-button"
   }
 };
 
@@ -325,7 +370,7 @@ function Button({ channelType }) {
         type: "button",
         "aria-label": TEXTAREA_BUTTON_ARIA_LABEL,
         onClick: () => {
-          ExpressionPicker.toggleExpressionPicker(
+          ExpressionPickerStore_default.toggleExpressionPicker(
             EXPRESSION_PICKER_VIEW,
             channelType
           );
@@ -406,6 +451,7 @@ function Button({ channelType }) {
     )
   );
 }
+var Button_default = Button;
 
 // src/RisiBank/patches/TextAreaButtonsMemo.tsx
 var { Patcher: Patcher3 } = BdApi;
@@ -425,7 +471,7 @@ var patch2 = () => {
         ret.props.children.splice(
           -1,
           0,
-          /* @__PURE__ */ BdApi.React.createElement(Button, { channelType: type })
+          /* @__PURE__ */ BdApi.React.createElement(Button_default, { channelType: type })
         );
       }
     }
