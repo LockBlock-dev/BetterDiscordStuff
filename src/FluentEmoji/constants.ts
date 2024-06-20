@@ -8,3 +8,6 @@ export const EMOJI_15_SRC_GITHUB_BASE =
 
 export const EMOJI_SRC_CDN_BASE =
     "https://statics.teams.cdn.office.net/evergreen-assets/personal-expressions/v2/assets/emoticons";
+
+export const UPDATE_URL =
+    "https://raw.githubusercontent.com/LockBlock-dev/BetterDiscordStuff/master/dist/FluentEmoji/FluentEmoji.plugin.js";

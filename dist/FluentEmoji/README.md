@@ -1,4 +1,4 @@
-# FluentEmoji ![Version Badge](https://img.shields.io/badge/version-1.1.3-blue)
+# FluentEmoji ![Version Badge](https://img.shields.io/badge/version-1.2.0-blue)
 
 Brings [fluent emojis](https://github.com/microsoft/fluentui-emoji) to the Discord client.
 

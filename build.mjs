@@ -1,6 +1,8 @@
-// This build script is the result of using two repositories:
-// https://github.com/Vendicated/BetterDiscordPlugins/blob/main/build.mjs and
-// https://github.com/Zerthox/BetterDiscord-Plugins/blob/master/scripts/build.ts
+/**
+ * This build script is the result of using two repositories:
+ * https://github.com/Vendicated/BetterDiscordPlugins/blob/main/build.mjs and
+ * https://github.com/Zerthox/BetterDiscord-Plugins/blob/master/scripts/build.ts
+ */
 
 import { context } from "esbuild";
 import chalk from "chalk";
@@ -74,6 +76,7 @@ for (const inputPath of inputPaths) {
         jsxFragment: "BdApi.React.Fragment",
         logLevel: "info",
         tsconfig: "./tsconfig.esbuild.json",
+        platform: "node",
         plugins: [
             {
                 name: "manifest-banner",

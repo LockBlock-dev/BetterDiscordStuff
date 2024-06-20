@@ -1,9 +1,10 @@
 const { Patcher, UI } = BdApi;
 
-import { PLUGIN_NAME } from "./constants";
+import { PLUGIN_NAME, UPDATE_URL } from "./constants";
 import { log, warn, err } from "./utils";
 import patches from "./patches";
 import type { Meta, Plugin } from "betterdiscord";
+import PluginUpdater from "../common/updater";
 
 /**
  * Represents the RisiBank plugin.
@@ -30,6 +31,8 @@ export default class RisiBank implements Plugin {
      * @returns {void}
      */
     init(): void {
+        PluginUpdater.update(PLUGIN_NAME, UPDATE_URL);
+
         patches.forEach((patchModule) => {
             try {
                 patchModule.patch();
