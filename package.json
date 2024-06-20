@@ -15,7 +15,7 @@
     "devDependencies": {
         "@types/betterdiscord": "github:zerthox/betterdiscord-types",
         "@types/node": "^20.14.6",
-        "@types/react": "^18.3.2",
+        "@types/react": "^18.3.3",
         "chalk": "^5.3.0",
         "esbuild": "^0.18.20",
         "minimist": "^1.2.8"
