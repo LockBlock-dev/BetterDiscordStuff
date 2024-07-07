@@ -16,7 +16,7 @@ export const emojiSrcFromGlyph = (glyph) => {
 
     if (!src) return;
 
-    if (emojis[unicode].branch === "williamch")
+    if (emojis[unicode].branch === "willchavez")
         src = `${EMOJI_15_SRC_GITHUB_BASE}/${src}`;
     else if (emojis[unicode].cdn)
         src = `${EMOJI_SRC_CDN_BASE}/${src}/default/100_f.png`;

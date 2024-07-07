@@ -6179,53 +6179,117 @@
         "glyph": "💤",
         "src": "Zzz/3D/zzz_3d.png"
     },
-    "1fa77": { "glyph": "🩷", "src": "Pink%20heart/3D/pink_heart_3d.png", "branch": "williamch" },
+    "1fa77": {
+        "glyph": "🩷",
+        "src": "Pink%20heart/3D/pink_heart_3d.png",
+        "branch": "willchavez"
+    },
     "1fa75": {
         "glyph": "🩵",
         "src": "Light%20blue%20heart/3D/light_blue_heart_3d.png",
-        "branch": "williamch"
+        "branch": "willchavez"
     },
-    "1fa76": { "glyph": "🩶", "src": "Grey%20heart/3D/grey_heart_3d.png", "branch": "williamch" },
+    "1fa76": {
+        "glyph": "🩶",
+        "src": "Grey%20heart/3D/grey_heart_3d.png",
+        "branch": "willchavez"
+    },
     "1faf8": {
         "glyph": "🫸",
         "src": "Rightwards%20pushing%20hand/Default/3D/rightwards_pushing_hand_3d_default.png",
-        "branch": "williamch"
+        "branch": "willchavez"
     },
     "1faf7": {
         "glyph": "🫷",
         "src": "Leftwards pushing hand/Default/3D/leftwards_pushing_hand_3d_default.png",
-        "branch": "williamch"
+        "branch": "willchavez"
     },
-    "1face": { "glyph": "🫎", "src": "Moose/3D/moose_3d.png", "branch": "williamch" },
-    "1facf": { "glyph": "🫏", "src": "Donkey/3D/donkey_3d.png", "branch": "williamch" },
-    "1fabd": { "glyph": "🪽", "src": "Wing/3D/wing_3d.png", "branch": "williamch" },
+    "1face": {
+        "glyph": "🫎",
+        "src": "Moose/3D/moose_3d.png",
+        "branch": "willchavez"
+    },
+    "1facf": {
+        "glyph": "🫏",
+        "src": "Donkey/3D/donkey_3d.png",
+        "branch": "willchavez"
+    },
+    "1fabd": {
+        "glyph": "🪽",
+        "src": "Wing/3D/wing_3d.png",
+        "branch": "willchavez"
+    },
     "1f426 200d 2b1b": {
         "glyph": "🐦‍⬛",
         "src": "Blackbird/3D/blackbird_3d.png",
-        "branch": "williamch"
+        "branch": "willchavez"
     },
-    "1fabf": { "glyph": "🪿", "src": "Goose/3D/goose_3d.png", "branch": "williamch" },
-    "1fabc": { "glyph": "🪼", "src": "Jellyfish/3D/jellyfish_3d.png", "branch": "williamch" },
-    "1fabb": { "glyph": "🪻", "src": "Hyacinth/3D/hyacinth_3d.png", "branch": "williamch" },
-    "1fada": { "glyph": "🫚", "src": "Ginger%20root/3D/ginger_root_3d.png", "branch": "williamch" },
-    "1fadb": { "glyph": "🫛", "src": "Pea%20pod/3D/pea_pod_3d.png", "branch": "williamch" },
+    "1fabf": {
+        "glyph": "🪿",
+        "src": "Goose/3D/goose_3d.png",
+        "branch": "willchavez"
+    },
+    "1fabc": {
+        "glyph": "🪼",
+        "src": "Jellyfish/3D/jellyfish_3d.png",
+        "branch": "willchavez"
+    },
+    "1fabb": {
+        "glyph": "🪻",
+        "src": "Hyacinth/3D/hyacinth_3d.png",
+        "branch": "willchavez"
+    },
+    "1fada": {
+        "glyph": "🫚",
+        "src": "Ginger%20root/3D/ginger_root_3d.png",
+        "branch": "willchavez"
+    },
+    "1fadb": {
+        "glyph": "🫛",
+        "src": "Pea%20pod/3D/pea_pod_3d.png",
+        "branch": "willchavez"
+    },
     "1faad": {
         "glyph": "🪭",
         "src": "Folding%20hand%20fan/3D/folding_hand_fan_3d.png",
-        "branch": "williamch"
+        "branch": "willchavez"
     },
-    "1faae": { "glyph": "🪮", "src": "Hair%20pick/3D/hair_pick_3d.png", "branch": "williamch" },
-    "1fa87": { "glyph": "🪇", "src": "Maracas/3D/maracas_3d.png", "branch": "williamch" },
-    "1fa88": { "glyph": "🪈", "src": "Flute/3D/flute_3d.png", "branch": "williamch" },
-    "1faaf": { "glyph": "🪯", "src": "Khanda/3D/khanda_3d.png", "branch": "williamch" },
-    "1f6dc": { "glyph": "🛜", "src": "Wireless/3D/wireless_3d.png", "branch": "williamch" },
+    "1faae": {
+        "glyph": "🪮",
+        "src": "Hair%20pick/3D/hair_pick_3d.png",
+        "branch": "willchavez"
+    },
+    "1fa87": {
+        "glyph": "🪇",
+        "src": "Maracas/3D/maracas_3d.png",
+        "branch": "willchavez"
+    },
+    "1fa88": {
+        "glyph": "🪈",
+        "src": "Flute/3D/flute_3d.png",
+        "branch": "willchavez"
+    },
+    "1faaf": {
+        "glyph": "🪯",
+        "src": "Khanda/3D/khanda_3d.png",
+        "branch": "willchavez"
+    },
+    "1f6dc": {
+        "glyph": "🛜",
+        "src": "Wireless/3D/wireless_3d.png",
+        "branch": "willchavez"
+    },
     "1fae8": {
         "glyph": "🫨",
         "src": "Shaking%20face/3D/shaking_face_3d.png",
-        "branch": "williamch"
+        "branch": "willchavez"
     },
     "1f4ce": { "glyph": "📎", "src": "1f4ce_paperclip", "cdn": true },
-    "1f9d1 200d 1f4bb": { "glyph": "🧑‍💻", "src": "persondeveloper", "cdn": true },
+    "1f9d1 200d 1f4bb": {
+        "glyph": "🧑‍💻",
+        "src": "persondeveloper",
+        "cdn": true
+    },
     "1f468 200d 1f4bb": { "glyph": "👨‍💻", "src": "mantechie", "cdn": true },
     "1f469 200d 1f4bb": { "glyph": "👩‍💻", "src": "womandeveloper", "cdn": true },
     "1f3ae": { "glyph": "🎮", "src": "games", "cdn": true }
